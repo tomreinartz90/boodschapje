@@ -1,0 +1,97 @@
+<div id="standard-menu" ng-class="{openForSmall: showFilterOnSmall}" class="small-10 medium-3 xlarge-2 columns show-for-medium-up filter" style="overflow-y: auto; height: 100%;">
+  <aside style="left: 100%; width: 100%; overflow-x: hidden">
+    <ul class="mode row">
+      <a ui-sref='movies' class="button small-6 columns disabled mode-films" style="margin: 0;">
+        Movies
+      </a>
+      <a ui-sref='series' class="button small-6 columns mode-series" style="margin: 0;">
+        Series
+      </a>
+    </ul>
+    <ul class="off-canvas-list zoeken film-zoeker">
+
+      <li>
+        <label>Title</label>
+        <input type="text" class="movie-search-term" name="keywords" list="movie-datalist" id="keywords" placeholder="Movie title" ng-model="filter.term" ng-model-options='{ debounce: 1000 }'>
+        <datalist id="movie-datalist"></datalist>
+      </li>
+      <li id="genre" ng-class="{open: filter.showGenre}" >
+        <label class="navigation" ng-click="filter.showGenre = !filter.showGenre">genre</label>
+        <div class="content">
+          <div class="switch round radius"  ng-repeat="(key, value) in filter.genres">
+            <input id="genre-{{key}}" type="radio" ng-model="filter.selectedGenre" name="genre-{{key}}" value="{{key}}">
+            <label for="genre-{{key}}">{{value}}</label>
+          </div>
+        </div>
+
+      </li>
+      <li id="sort" ng-class="{open: filter.showSort}" >
+        <label class="navigation" ng-click="filter.showSort = !filter.showSort">sort</label>
+        <div class="content">
+          <div class="switch round radius"  ng-repeat="(key, value) in filter.sorts">
+            <input id="sort-{{key}}" type="radio" ng-model="filter.selectedSort" name="sort-{{key}}" value="{{key}}">
+            <label for="sort-{{key}}">{{value}}</label>
+          </div>
+        </div>
+
+      </li>
+      <li ng-class="{open: filter.showQuality}" >
+        <label class="navigation" ng-click="filter.showQuality = !filter.showQuality">Kwaliteit</label>
+        <div class="content open">
+          <div class="switch round radius"  ng-repeat="(key, value) in filter.qualities">
+            <input id="quality-{{key}}" type="radio" ng-model="filter.selectedQuality" name="quality-{{key}}" value="{{key}}">
+            <label for="quality-{{key}}">{{value}}</label>
+          </div>
+        </div>
+      </li>
+      <li ng-class="{open: filter.showRating}" >
+        <label class="navigation" ng-click="filter.showRating = !filter.showRating">IMDB rating</label>
+        <div class="content">
+          <input ngModel="filter.selectedRating" type="number" min="3" max="9" name="imdbRating" id="imdbRating" value="6">
+        </div>
+      </li>
+
+      <li>
+        <label></label><a id="zoek" class="button" ng-click="buttonSearch()">Zoek</a>
+      </li>
+    </ul>
+    <ul class="off-canvas-list zoeken">
+      <li ng-class="{open: filter.showXbmc}" >
+        <label class="navigation" ng-click="filter.showXbmc = !filter.showXbmc">XBMC koppeling</label>
+        <div class="content">
+          <input type="text" name="XBMCadress" id="XBMCadress" value=""  ngModel="filter.xbmcAdress">
+          <div class="switch round radius" >
+            <input id="{{filter.hideMarked.name}}" type="checkbox" ng-model="filter.hideMarked.value" name="{{filter.hideMarked.name}}">
+            <label for="{{filter.hideMarked.name}}">{{filter.hideMarked.name}}</label>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </aside>
+</div>
+
+
+<a class="button show-for-small-only show-filter"  ng-click="showFilterOnSmall = true">Filter results</a>
+<div ng-class="{fadeOut: showFilterOnSmall}" class="small-12 medium-9 xlarge-10 columns movies" ng-click="showMovies()"> 
+  <!--  | orderBy:'torrents[0].seeds':true -->
+  <div ng-repeat="movie in movies()" >
+    <div class="filmItemHouder small-6 medium-4 large-2 xlarge-2 columns" ng-show="showMovie()">
+      <a class="filmitem" ui-sref='viewMovie({id:movie.imdb_code})'>
+        <img width="100%" ng-src="{{movie.medium_cover_image}}">
+      </a>    
+      <div ng-click="markWatched(movie)" class="watched button {{hasBeenWatched(movie)}}"></div>
+      <div class="actions">
+        <h6>{{movie.title}}
+
+        </h6>
+        <!--        <h7>{{movie.rating}} &nbsp; {{movie.year}}  </h7>-->
+        <div class="downloads">
+          <div ng-repeat="torrent in movie.torrents" > 
+            <a href="{{torrent.url}}" title="size: {{torrent.size}}, seeds: {{torrent.seeds}}, peers: {{torrent.peers}}">{{torrent.quality}}</a> 
+            </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

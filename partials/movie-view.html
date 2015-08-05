@@ -1,0 +1,26 @@
+<a class="button expand text-left" ui-sref='movies'>All movies</a>
+<div ng-style="{'background-image': 'url('+ imageBaseUrl + 'w1280' + movie.movieDB.backdrop_path +')',
+               'background-size' : 'cover'}">
+  <div class="row view-movie">
+    <div class="row">
+      <div class="small-3 medium-3 columns">
+        <img src="{{imageBaseUrl}}w342{{movie.movieDB.poster_path}}" style="width: 100%"/>
+      </div>
+      <div class="small-9 medium-9 large-9 columns">
+        <h2 id="titel">{{movie.yify.title}}</h2>
+        <h3 id="rating">{{movie.yify.rating}}</h3>
+        <h3 id="genre"><span ng-repeat="(key, value) in movie.yify.genres">{{value}}&nbsp;</span></h3>
+        <h3 id="kwaliteit"><span ng-repeat="download in movie.yify.torrents">{{download.quality}}&nbsp;</span> </h3>
+        <h3 id="geupload">{{movie.yify.date_uploaded}}</h3>
+        <p id="plot">{{movie.movieDB.overview}}</p>
+
+      </div>
+    </div>
+    <div class="small-12 medium-9 columns medium-push-3">
+        <iframe ng-if="movie.trailer[0].size > 0" id="trailer" width="100%" height="500rem" src="{{getTrailer()}}" frameborder="0" allowfullscreen=""></iframe>
+      <div class="left columns" ng-repeat="download in movie.yify.torrents">
+        <br><a id="download720p" href="{{download.url}}" class="button left" title="size: {{download.size}}, seeds: {{download.seeds}}, peers: {{download.peers}}">Download in {{download.quality}}</a>
+      </div>
+    </div>
+  </div>
+</div>

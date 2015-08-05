@@ -1,0 +1,34 @@
+<div ng-controller="homeController as home">
+  <div class="row">
+    welkom {{home.name}}
+  </div>
+  <div class="row list">
+    <div class="row collapse listitem panel" ng-repeat="list in home.lists"  ui-sref='viewList({id:list.id})'>
+      <div class="small-2 columns image">{{list.category}}</div>
+      <div class="small-8 columns name">{{list.name}}</div>
+      <div class="small-2 columns total">{{home.totalListItems(list)}} </div>
+    </div>
+  </div>
+
+
+  <div class="row sticky bottom">
+    <div class="button right" ng-click="home.newlist.showForm = true">+</div>
+    <div class="new-list" ng-show="home.newlist.showForm">
+      <div class="large-12 columns">
+        <label>Naam
+          <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
+        </label>
+      </div>      
+      <div class="large-12 columns">
+        <label>Categorie
+          <select ng-model="home.newlist.category">
+            <option value="{{key}}" ng-selected="{{key == home.newlist.category}}"  ng-repeat="(key, value) in home.newlist.categories">{{value}}</option>
+          </select>
+        </label>
+      </div>
+      <div class="large-12 columns">
+        <div class="button" ng-click="home.addlist()">Toevoegen</div>
+      </div>
+    </div>
+  </div>
+</div>

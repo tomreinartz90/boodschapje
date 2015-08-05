@@ -1,0 +1,43 @@
+<div ng-controller="ListController as list">
+  <div class="row">
+    <div class="button small" ui-sref="home"><h4><</h4></div>
+      <h3>{{list.name}}</h3>
+  </div>
+  <div class="row list">
+    <div class="row collapse listitem panel" ng-repeat="item in list.thisList.listItems">
+      <div class="small-2 columns image" ng-click="list.listitem.complete(item)">{{item.completed}}</div>
+      <div class="small-8 columns name" ng-init="editName = false">
+        
+        <div class="small-12 columns" ng-show="!editName"  ng-click="editName = true">{{item.name}}</div>
+        <div ng-show="editName" class="row collapse">
+          <div class="small-8 columns">
+            <input ng-model="newName" type="text" placeholder="{{item.name}}"/>
+          </div>
+          <div class="small-2 columns">
+            <div class="button postfix" ng-click="list.listitem.updateName(newName, item); editName = false" placeholder="{{item.name}}">save</div>
+          </div>
+          <div class="small-2 columns">
+            <div class="button postfix" ng-click="editName = false">cancel</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="small-2 columns total">{{totalListItems()}} </div>
+    </div>
+  </div>
+
+
+  <div class="row sticky bottom">
+    <div class="button right" ng-click="list.addNewListItem.showForm = !list.addNewListItem.showForm">+</div>
+    <div class="new-list white-bg columns" ng-show="list.addNewListItem.showForm">
+      <div class="large-12 columns">
+        <label>Naam
+          <autocomplete click-activation="true" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.boodschappen" type="text"  />
+        </label>
+      </div>      
+      <div class="large-12 columns">
+        <div class="button expand" ng-click="list.addlist()">Toevoegen</div>
+      </div>
+    </div>
+  </div>
+</div>

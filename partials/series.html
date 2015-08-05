@@ -1,0 +1,47 @@
+<div id="standard-menu" ng-class="{openForSmall: showFilterOnSmall}" class="small-10 medium-3 xlarge-2 columns show-for-medium-up filter" style="overflow-y: auto; height: 100%;">
+  <aside style="left: 100%; width: 100%; overflow-x: hidden">
+    <ul class="mode row">
+      <a ui-sref='movies' class="button small-6 columns mode-films" style="margin: 0;">
+        Movies
+      </a>
+      <a ui-sref='series' class="button small-6 columns disabled mode-series" style="margin: 0;">
+        Series
+      </a>
+    </ul>
+    <ul class="off-canvas-list zoeken film-zoeker">
+
+      <li>
+        <label>Title</label>
+        <input type="text" class="movie-search-term" name="keywords" list="movie-datalist" id="keywords" placeholder="Series title" ng-model="filter.term" ng-model-options='{ debounce: 1000 }'>
+        <datalist id="movie-datalist"></datalist>
+      </li>
+      <li>
+        <label></label><a id="zoek" class="button" ng-click="buttonSearch()">Zoek</a>
+      </li>
+    </ul>
+    <ul class="off-canvas-list zoeken">
+      <li ng-class="{open: filter.showXbmc}" >
+        <label class="navigation" ng-click="filter.showXbmc = !filter.showXbmc">XBMC koppeling</label>
+        <div class="content">
+          <input type="text" name="XBMCadress" id="XBMCadress" value=""  ngModel="filter.xbmcAdress">
+        </div>
+      </li>
+
+    </ul>
+  </aside>
+</div>
+
+
+<a class="button show-for-small-only show-filter"  ng-click="showFilterOnSmall = true">Filter results</a>
+<div ng-class="{fadeOut: showFilterOnSmall}" class="small-12 medium-9 xlarge-10 columns movies" ng-click="showSeries()"> 
+  <!--  | orderBy:'torrents[0].seeds':true -->
+  <div ng-repeat="serie in series()" ng-if="serie.images.poster != undefined" >
+    <div class="filmItemHouder small-6 medium-4 large-2 xlarge-2 columns">
+      <a class="filmitem" ui-sref='viewSerie({id:serie._id})'>
+        <img width="100%" ng-src="{{getThumb(serie.images.poster)}}">
+      </a>
+      <div class="actions">
+        <h6>{{serie.title}}</h6>
+      </div>
+    </div>
+  </div>
