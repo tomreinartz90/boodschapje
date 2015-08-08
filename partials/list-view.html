@@ -1,14 +1,18 @@
-<div ng-controller="ListController as list">
-  <div class="row">
-    <div class="button small" ui-sref="home"><h4><</h4></div>
-      <h3>{{list.name}}</h3>
+<div ng-controller="ListController as list" class="list-page page">
+  <div class="row header">
+    <div class="action" ui-sref="home"><div class="back entypo-left-open-big"></div></div>
+    <div class="title">{{list.name}}</div>
   </div>
   <div class="row list">
-    <div class="row collapse listitem panel" ng-repeat="item in list.thisList.listItems">
-      <div class="small-2 columns image" ng-click="list.listitem.complete(item)">{{item.completed}}</div>
-      <div class="small-8 columns name" ng-init="editName = false">
-        
-        <div class="small-12 columns" ng-show="!editName"  ng-click="editName = true">{{item.name}}</div>
+    <div class="row collapse listitem panel" ng-class="{'complete': item.completed}" 
+         ng-repeat="item in list.thisList.list_items | orderBy: dateAdded">
+      <div class="small-2 columns image" ng-click="list.listitem.complete(item)">
+        <span ng-show="!item.completed" class="entypo-check"></span>
+        <span ng-show="item.completed" class="entypo-block"></span>
+      </div>
+      <div class="small-8 columns name" ng-init="editName = false" ng-click="list.listitem.complete(item)">
+
+        <div class="small-12 columns" ng-show="!editName">{{item.name}}</div>
         <div ng-show="editName" class="row collapse">
           <div class="small-8 columns">
             <input ng-model="newName" type="text" placeholder="{{item.name}}"/>
@@ -22,13 +26,16 @@
         </div>
 
       </div>
-      <div class="small-2 columns total">{{totalListItems()}} </div>
+      <div class="small-1 columns total" ng-click="editName = true"><span class="entypo-dot-3"></span></div>
     </div>
   </div>
 
 
   <div class="row sticky bottom">
-    <div class="button right" ng-click="list.addNewListItem.showForm = !list.addNewListItem.showForm">+</div>
+    <div class="button right add" ng-click="list.addNewListItem.showForm = !list.addNewListItem.showForm">
+      <span ng-show="!list.addNewListItem.showForm" class="entypo-plus"></span>
+      <span ng-show="list.addNewListItem.showForm" class="entypo-minus"></span>
+    </div>
     <div class="new-list white-bg columns" ng-show="list.addNewListItem.showForm">
       <div class="large-12 columns">
         <label>Naam

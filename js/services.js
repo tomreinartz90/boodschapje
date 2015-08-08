@@ -1,9 +1,10 @@
 // collection of services
 
-services.factory('Yify', function($resource){
-  url =  "https://yts.to/api/v2/list_movies.json";
+services.factory('apiService', function($resource, getDataService, storeDataService){
+  var _this = {};
+  var url =  "http://nas.tomreinartz.com/slim/";
 
-  settings = {
+  var settings = {
     limit: "24", //max 50
     page: '@_page',
     minimum_rating: "@_minimum_rating", //vanaf IMDB rating 7
@@ -13,13 +14,65 @@ services.factory('Yify', function($resource){
     genre: "@_genre",
     order_by: "desc" //desc asc //aflopend oplopend
   };
+  var loginData = getDataService.byKey('login') || {}; 
 
-  return $resource( url  , settings, {
-    get : {
+  return $resource( url, {}, {
+    login : {
+      url: url + "login",
       method: 'get',
-      cache: false
+      cache: false,
+      params: { 
+        password: loginData.password, 
+        email: loginData.email,
+      },
+      timeout: 500
+    },
+    getLists : { 
+      url: url + "lists",
+      method: 'get',
+      cache: false,
+      params: { 
+        email: loginData.email,
+        secret: loginData.secret, 
+      },
+      timeout: 500
+    },
+    newListItem : { 
+      url : url + "new-list-item",
+      method: 'post',
+      params: { 
+        email: loginData.email,
+        secret: loginData.secret,
+        name: '@name',
+        category: '@category',
+        listid: '@listid'
+      },
+      timeout: 500
+    },    
+    updateListItem : { 
+      url : url + "update-list-item",
+      method: 'post',
+      params: { 
+        email: loginData.email,
+        secret: loginData.secret,
+        name: '@name',
+        completed: '@completed',
+        listitemid: '@listitemid'
+      },
+      timeout: 500,
+    },
+    getUpdates : { 
+      url : url + "updates",
+      method: 'get',
+      params: { 
+        email: loginData.email,
+        secret: loginData.secret,
+        timestamp: '@timestamp',
+      },
+      timeout: 500,
     }
   });
+
 
 }).service('storeDataService',function(){
   //temp will be loaded first, then perm memory will be loaded
@@ -96,7 +149,7 @@ services.factory('Yify', function($resource){
     else
       return data;
   }
-}).service('listsService',function($rootScope, getDataService){
+}).service('listsService',function($rootScope, getDataService, apiService){
   _this = this;
   _this.getCategories = function () { 
     return {
@@ -106,10 +159,39 @@ services.factory('Yify', function($resource){
       4: 'slager'
     } 
   }
+  _this.getLatestListFromApi = function () { 
+    //login is successfull lets update the lists
+    apiService.getLists({}, function(apiData) { 
+      if(apiData.success) {
+        storeLists(apiData.results);
+        if(_this.gettingUpdatesFromApi == false)
+          _this.getUpdatesFromApi(apiData.timestamp);
+      } 
+    });
+  };
+  _this.gettingUpdatesFromApi = false;
+  _this.getUpdatesFromApi =  function (timestamp) { 
+    _this.gettingUpdatesFromApi = true;
+    apiService.getUpdates({timestamp: timestamp}, function(apiData){
+      if(apiData.success) {
+        setTimeout(function() { 
+          var lists = _this.getLists();
+          angular.forEach(apiData.results, function(updatedListItem) {
+            //all lists
+            _this.updateLocalListItem(updatedListItem);
+          });
+
+          _this.getUpdatesFromApi(apiData.timestamp);
+        }, 5000);
+      }
+    });
+  }
+
+
   _this.getLists = function () { 
     var localData = new Object(),
         data = null;
-
+    //no connection, get local data;
     localData = JSON.parse(localStorage.getItem('lists'));
     //check if data is available
     if(localData !== 'undefined' && localData !== null){
@@ -117,23 +199,31 @@ services.factory('Yify', function($resource){
     }
     //if not data is stored return false
     if(typeof data === 'undefined' || data === null)
-      return false;
+      return(false);
     else
-      return data;
+      return(data);
+
   };
   _this.getList = function (listId) { 
     if (listId !== undefined){
-      var lists = _this.getLists();
-      list = lists[listId];
-      if (list !== undefined) 
+      var listsData = _this.getLists();
+      list = null;
+      angular.forEach(listsData, function(value, key) {
+        if(value !== undefined && value !== null ){
+          if(Number(value.listid) == listId)
+            list = value;
+        }
+      });
+      if (list !== null)
         return list;
-      else return false;
+      else
+        return(false);
     }
   }
 
   _this.newList = function (name, category) { 
     //get current lists
-    var lists = _this.getLists();
+    //    var lists = _this.getLists();
     if (!lists)
       lists = new Object();
     var id = name + "-" + new Date().getTime();
@@ -141,7 +231,7 @@ services.factory('Yify', function($resource){
       id: id,
       name: name,
       category: category,
-      listItems: {}
+      list_items: {}
     }
     //only store if list is undefined
     if(typeof lists[id] === 'undefined')
@@ -162,43 +252,78 @@ services.factory('Yify', function($resource){
   _this.newListItem = function (listId, listItemName, listItemCategory) { 
     if(listId !== undefined && typeof listItemName !== 'undefined' && typeof listItemCategory !== 'undefined'){
 
-      //model
-      var ListItem = function (name, category) { 
-        return { 
-          name: name,
-          category: 1,  
-          id: name + "-" + new Date().getTime(),
-          addedBy: loginData.name,
-          completedBy: '',
-          completed: false,
-          dateAdded: new Date().getTime()
-        }
-      }
+      //      //model
+      //      var ListItem = function (name, category) { 
+      //        return { 
+      //          id: name + "-" + new Date().getTime(),
+      //          name: name,
+      //          category: 1,  
+      //          addedBy: loginData.name,
+      //          completedBy: '',
+      //          completed: false,
+      //          dateAdded: new Date().getTime()
+      //        }
+      //      }
 
       var loginData = getDataService.byKey('login');
-      var listItem = new ListItem(listItemName, listItemCategory);
-      var list = _this.getList(listId);
-      var lists = _this.getLists();
+      //      var listItem = new ListItem(listItemName, listItemCategory);
 
-      if (list !== undefined) { 
-        list.listItems[listItem.id] = listItem;
-        lists[listId] = list;
-        storeLists(lists);
-      }
+      var newListItem = apiService.newListItem({
+        name: listItemName, 
+        category: listItemCategory, 
+        listid: listId
+      });
+      newListItem.$promise.then(function(data) {
+        var listItem = data.results[0];
+        console.log(listItem);
+        _this.updateLocalListItem(listItem);
+      });
     }
-  }
+  } 
+
+  /*
+  ** update listitem on database and update local listitem
+  **  @param listItemId: int, id of listitem
+  **  @param newListItem: object of key, value pairs of values that need to be updated
+  */
+
   _this.updateListItem = function (listItemId, newListItem) { 
     var lists = this.getLists();
-    //loop trough each list 
+
+    newListItem.listitemid = listItemId;
+    //ask api for update
+    var updateListItem = apiService.updateListItem(newListItem);
+    updateListItem.$promise.then(function(data){
+      if(updateListItem.success){
+        _this.updateLocalListItem(updateListItem.results[0]);
+      }
+    });
+  }
+
+  _this.updateLocalListItem = function(newListItem) { 
+    var lists = this.getLists();
+    var success = false;
     angular.forEach(lists, function(list, listKey) {
       //loop trough each listitem
-      angular.forEach(list.listItems, function(listitem, itemKey) {
-        //make change when listitem is found
-        if(listitem.id == listItemId){
-          lists[listKey].listItems[itemKey] = newListItem;
+      if(list.listid == newListItem.listid){
+        angular.forEach(list.list_items, function(listitem, itemKey) {
+          //make change when listitem is found
+          if(listitem.id == newListItem.id){
+            lists[listKey].list_items[itemKey] = newListItem;
+            storeLists(lists);
+            success = true;
+          } 
+
+        });
+        //insert listitem if it was not found
+        if(!success){
+          if(lists[listKey].list_items == undefined)
+            lists[listKey].list_items = [];
+
+          lists[listKey].list_items.push(newListItem);
           storeLists(lists);
         }
-      });
+      }
     });
   }
 
@@ -210,6 +335,8 @@ services.factory('Yify', function($resource){
     localStorage.setItem('lists', JSON.stringify(listsData));
     //broadcast that lists have been updated
     $rootScope.$broadcast('lists-updated', listsData);
-    console.log(listsData)
+
+    console.log("list updated");
+    console.log(listsData);
   }
 });

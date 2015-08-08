@@ -46,8 +46,9 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
     var login = { 
       name: _this.name,
       email: _this.email,
-      secret: _this.password
+      password: _this.password
     };
+
     storeDataService.perm('login', login);
     _this.accountSuccess = "Uw account is aangemaakt.";
     window.setTimeout(function(){ 
@@ -131,7 +132,7 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
     var login = { 
       name: _this.name,
       email: _this.email,
-      secret: _this.password
+      password: _this.password
     };
     storeDataService.perm('login', login);
     _this.accountSuccess = "Uw account is aangemaakt.";
@@ -143,7 +144,7 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
 });
 
 
-controllers.controller('homeController', function($scope,$rootScope,$state,$window,$document,getDataService, listsService){
+controllers.controller('homeController', function($scope,$rootScope,$state,$window,$document,getDataService,storeDataService,apiService,listsService){
   var _this = this;
   _this.lists = new Object,
     _this.activeList = '',
@@ -157,10 +158,27 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
   }
 
   var loginData = getDataService.byKey('login');
+  console.log(loginData);
   if(!loginData){
     $state.go('^.login');
     return;
-  } 
+  } else { 
+    //login
+    apiService.login({}, function(data) { 
+      if (data.success == false) { 
+        $state.go('^.login');
+        return;
+      } else { 
+        //store secret
+        var loginData = getDataService.byKey('login');
+        loginData.secret = data.results[0].secret;
+        storeDataService.perm('login', loginData);
+      }
+    });
+  }
+
+  //login is successfull lets update the lists
+  listsService.getLatestListFromApi();
 
   //fill data from services
   _this.newlist.categories = listsService.getCategories();
@@ -185,10 +203,13 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
 
   _this.totalListItems = function (list) { 
     var size = 0, key;
-    for (key in list.listItems) {
-      if (list.listItems.hasOwnProperty(key) && key.completed) size++;
+    for (key in list.list_items) {
+      if (!list.list_items[key].completed){
+        size++;
+      }
     }
     return size;
+    return list.list_items.length;
   }
 
 });
@@ -203,10 +224,15 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
 
 
   var _this = this
+  _this.thisList = {name: ''};
   listId =  $stateParams.id,
     _this.thisList = new Object,
     _this.activeList = '',
     _this.name = '';
+
+  _this.filter = function(){ 
+    return false; 
+  }
 
 
   _this.addNewListItem = { 
@@ -214,22 +240,45 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
     showForm: false
   };
 
-  //fill data from services
-  _this.thisList = listsService.getList(listId);
-  _this.name = _this.thisList.name;
+  //use data from service first
+  listsService.getLatestListFromApi();
 
   _this.boodschappen = allProducts.filter(function(item, pos) {
     return allProducts.indexOf(item) == pos;
   });
 
-
   $scope.$on('lists-updated', function(events, lists){
-    if(typeof lists === 'object'){
-      _this.thisList = lists[listId]; 
-    }
+    getList();
   });
 
-  console.log(typeof _this.thisList)
+  var getList = function() { 
+    data = listsService.getList($stateParams.id);
+    _this.name = data.name;
+    data.list_items.sort(listComparator);
+    console.log(data);
+    _this.thisList = data;
+  }
+
+  // comparator to sort seasons by seasonNumber
+  function listComparator(a, b) {
+    //group
+    if (a.completed != b.completed) {
+      if (a.completed < b.completed)
+        return -1;
+      if (a.completed > b.completed)
+        return 1;
+      return 0;
+    }
+    //order
+    if (a.dateAdded > b.dateAdded)
+      return -1;
+    if (a.dateAdded < b.dateAdded)
+      return 1;
+    return 0;
+  }
+
+
+
   if(_this.thisList == false){
     $state.go('^.home');
   }
@@ -243,20 +292,39 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
       _this.lists = listsService.getLists();
     }
   }
-
+  //holder for listitem methods
   _this.listitem = new Object();
-  _this.listitem.complete = function (listItem) { 
-    listItem.completed = !listItem.completed;
-    listItem.completedBy = loginData.name;
 
-    listsService.updateListItem(listItem.id, listItem);    
-    console.log(listItem); 
+  /*
+  ** set listitem completed state to !completed state
+  ** @param listItem: object, original listitem
+  */
+  _this.listitem.complete = function (listItem) { 
+    //real update
+    var update = { 
+      completed: !listItem.completed
+    };
+    //fake success
+    angular.forEach(_this.thisList.list_items, function(item, key){
+      if(item.id == listItem.id)
+        _this.thisList.list_items[key].completed = update.completed;
+    });
+
+    listsService.updateListItem(listItem.id, update);    
+
   }
 
+  /*
+  ** set listitem name to newName
+  ** @param listItem: object, original listitem
+  ** @param name: string, new name for listitem
+  */
   _this.listitem.updateName = function (newName, listItem){ 
     if(newName !== undefined && newName.length > 2){
-      listItem.name = newName;
-      listsService.updateListItem(listItem.id, listItem);
+      var update = { 
+        name: newName
+      }
+      listsService.updateListItem(listItem.id, update);
     }
   }
 

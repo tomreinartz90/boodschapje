@@ -1,40 +1,44 @@
-<form ng-controller="LoginController as login" class="login-page">
+<div class="page login-page">
+  <form ng-controller="LoginController as login" class="login-page">
 
 
-  <div class="row" ng-show="login.name">
-    <div class="large-12 columns">
-      <h3>Welkom terug {{login.name}}</h3>
+    <div class="row" ng-show="login.name">
+      <div class="large-12 columns">
+        <h3>Welkom terug {{login.name}}</h3>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Email
-        <input type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Wachtwoord
-        <div class="row collapse">
-          <div class="small-10 columns">
-            <input ng-model="login.password" type="{{login.passwordVisible  ? 'text':'password'}}" placeholder="{{login.passwordPlaceholder}}">
-          </div>
-          <div class="small-2 columns">
-            <div  ng-click="login.passwordVisible = !login.passwordVisible" class="button postfix">{{!login.passwordVisible ? 'show':'hide'}}</div>
-          </div>
+    <div class="login-form sticky bottom">
+      <div class="row">
+        <div class="large-12 columns">
+          <label>Email
+            <input type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
+          </label>
         </div>
-      </label>
-    </div>
-    <div class="large-12 columns login">
-      <div class="label alert" ng-show="login.loginError">{{login.loginError}}</div>
-      <div class="label success" ng-show="login.loginSuccess">{{login.loginSuccess}}</div>
-      <a href="#" ng-click="login.login()" class="button expand">Login</a>
-    </div>
+      </div>
+      <div class="row">
+        <div class="large-12 columns">
+          <label>Wachtwoord
+            <div class="row collapse">
+              <div class="small-10 columns">
+                <input ng-model="login.password" type="{{login.passwordVisible  ? 'text':'password'}}" placeholder="{{login.passwordPlaceholder}}">
+              </div>
+              <div class="small-2 columns">
+                <div  ng-click="login.passwordVisible = !login.passwordVisible" class="button postfix">{{!login.passwordVisible ? 'show':'hide'}}</div>
+              </div>
+            </div>
+          </label>
+        </div>
+        <div class="large-12 columns login">
+          <div class="label alert" ng-show="login.loginError">{{login.loginError}}</div>
+          <div class="label success" ng-show="login.loginSuccess">{{login.loginSuccess}}</div>
+          <a href="#" ng-click="login.login()" class="button expand">Login</a>
+        </div>
 
-    <div class="large-12 columns new-login">
-      <a href="#" ui-sref="createAccount" class="text-center small-12 columns">Nog geen account?</a>
-    </div>
+        <div class="large-12 columns new-login">
+          <a href="#" ui-sref="createAccount" class="text-center small-12 columns">Nog geen account?</a>
+        </div>
 
-  </div>
-</form>
+      </div>
+    </div>
+  </form>
+</div>

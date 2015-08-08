@@ -1,9 +1,9 @@
 /**
  */
 
-angular.module('boodschapje',['ui.router','ngResource','boodschapje.controllers','boodschapje.services', 'autocomplete']);
+angular.module('boodschapje',['ui.router','ngResource','angular-toArrayFilter', 'angular.filter','boodschapje.controllers','boodschapje.services', 'autocomplete']);
 
-angular.module('boodschapje').config(function($stateProvider,$httpProvider,$sceDelegateProvider, $compileProvider){
+angular.module('boodschapje').config(function($stateProvider,$filterProvider,$httpProvider,$sceDelegateProvider, $compileProvider){
   $sceDelegateProvider.resourceUrlWhitelist([
     'self',
     'https://www.youtube.com/**'

@@ -5,74 +5,78 @@
   font-family: 'entypo', sans-serif;
 }
 
-body, html {
+body, html { 
   font-family: 'Lato', sans-serif;
 }
 
-.sticky {
+.sticky { 
   position: fixed;
   width: 100%;
   left: 0;
   right: 0;
+  &.bottom { 
+    bottom: 0; 
+  }
+  &.top { 
+    top: 0; 
+  }
 }
 
-.sticky.bottom {
-  bottom: 0;
-}
 
-.sticky.top {
-  top: 0;
-}
-
-.new-list {
-  box-shadow: 0 0 4rem rgba(0, 0, 0, 0.3);
+.new-list { 
+  box-shadow: 0 0 4rem rgba(0,0,0,0.3);
   padding: 1rem;
 }
 
-.white-bg {
-  background-color: white;
+.white-bg { 
+  background-color: white; 
 }
 
-.page {
+.page { 
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.login-page {
+.login-page { 
   background-image: url(../img/logo.svg);
   background-repeat: no-repeat;
   background-size: 30%;
   background-position: center 20vh;
 }
 
-.list-page .header {
-  background-image: url(../img/lists.jpg);
+
+.list-page { 
+  .header { 
+    background-image: url(../img/lists.jpg);
+  }
+
+  .list { 
+    padding-bottom: 4rem;
+
+    .entypo-block { 
+      color: #00a0d4;
+    }
+  }
 }
 
-.list-page .list {
-  padding-bottom: 4rem;
+.home-page { 
+  .header { 
+    background-image: url(../img/lists-2.jpg);
+  }
+
+  .image { 
+    color: #00a0d4;
+  }
 }
 
-.list-page .list .entypo-block {
-  color: #00a0d4;
-}
-
-.home-page .header {
-  background-image: url(../img/lists-2.jpg);
-}
-
-.home-page .image {
-  color: #00a0d4;
-}
-
-div.panel {
+div.panel { 
   background-color: transparent;
   font-size: 1.2rem;
   text-transform: capitalize;
 }
 
-.button.add {
+.button.add { 
   font-size: 3rem;
   border-radius: 4rem;
   margin-right: 5vw;
@@ -84,51 +88,53 @@ div.panel {
   line-height: 1.35;
 }
 
-.complete {
-  opacity: .6;
+.complete { 
+  opacity: .6; 
 }
 
-.header {
+
+.header { 
   height: 15rem;
   width: 100%;
   background-image: url(../img/lists-2.jpg);
   background-size: 100% auto;
   background-position: center center;
   position: relative;
-  text-shadow: 5px 5px 6px rgba(0, 0, 0, 0.6);
+  text-shadow: 5px 5px 6px rgba(0,0,0,0.6);
+  .title { 
+    font-size: 3rem;
+    color: white;
+    position: absolute;
+    top: 5rem;
+    padding-left: 1.5rem;
+  }
+  .action { 
+    font-size: 1.2rem;
+    .back { 
+      float: left;
+      color: white;
+      padding: 1rem 1.5rem;
+    }
+
+  }
 }
 
-.header .title {
-  font-size: 3rem;
-  color: white;
-  position: absolute;
-  top: 5rem;
-  padding-left: 1.5rem;
-}
 
-.header .action {
-  font-size: 1.2rem;
-}
-
-.header .action .back {
-  float: left;
-  color: white;
-  padding: 1rem 1.5rem;
-}
 
 /* AUTOCOMPLETE */
-.autocomplete {
+
+.autocomplete{
   width: 100%;
   position: relative;
 }
 
-.autocomplete input {
+.autocomplete input{
   font-size: 1.2em;
   width: 100%;
-  padding: 0.4em;
+  padding:0.4em;
 }
 
-.autocomplete ul {
+.autocomplete ul{
   position: relative;
   left: 0;
   margin: 0;
@@ -141,15 +147,15 @@ div.panel {
   overflow: auto;
 }
 
-.autocomplete li {
+.autocomplete li{
   text-align: left;
-  list-style: none;
+  list-style:none;
   width: 100%;
-  padding: 0.4em;
+  padding:0.4em;
   background-color: #fff;
 }
 
-.autocomplete li.active {
+.autocomplete li.active{
   width: 100%;
   background-color: #4bf;
 }

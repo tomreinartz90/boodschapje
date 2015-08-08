@@ -1,19 +1,23 @@
-<div ng-controller="homeController as home">
-  <div class="row">
-    welkom {{home.name}}
+<div ng-controller="homeController as home" class="home-page page">
+  <div class="row name header">
+    <div class="action"></div>
+    <div class="title"><!--{{home.name}}--> Uw Lijsten</div>
   </div>
   <div class="row list">
-    <div class="row collapse listitem panel" ng-repeat="list in home.lists"  ui-sref='viewList({id:list.id})'>
-      <div class="small-2 columns image">{{list.category}}</div>
-      <div class="small-8 columns name">{{list.name}}</div>
+    <div class="row collapse listitem panel" ng-repeat="list in home.lists"  ui-sref='viewList({id:list.listid})'>
+      <div class="small-1 columns image"><span class="entypo-record"></span></div>
+      <div class="small-9 columns name">{{list.name}}</div>
       <div class="small-2 columns total">{{home.totalListItems(list)}} </div>
     </div>
   </div>
 
 
   <div class="row sticky bottom">
-    <div class="button right" ng-click="home.newlist.showForm = true">+</div>
-    <div class="new-list" ng-show="home.newlist.showForm">
+    <div class="button right add" ng-click="home.newlist.showForm = !home.newlist.showForm">
+      <span ng-show="!home.newlist.showForm" class="entypo-plus"></span>
+      <span ng-show="home.newlist.showForm" class="entypo-minus"></span>
+    </div>
+    <div class="new-list white-bg columns" ng-show="home.newlist.showForm">
       <div class="large-12 columns">
         <label>Naam
           <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
