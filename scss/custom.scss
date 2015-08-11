@@ -1,5 +1,8 @@
+@import "animate"; 
+
 @import url(http://weloveiconfonts.com/api/?family=entypo);
 @import url(http://fonts.googleapis.com/css?family=Lato:400,700,300);
+
 /* entypo */
 [class*="entypo-"]:before {
   font-family: 'entypo', sans-serif;
@@ -21,6 +24,82 @@ body, html {
     top: 0; 
   }
 }
+
+
+/* animations */
+
+[ui-view]{ //very important!
+  -webkit-transition:all .5s ease-in-out;
+  -moz-transition:all .5s ease-in-out;
+  -o-transition:all .5s ease-in-out;
+  transition:all .5s ease-in-out;
+
+
+  -webkit-animation-duration: .35s;
+  animation-duration: .35s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  &.ng-enter { 
+    .page { 
+      -webkit-animation-name: fadeOutLeft;
+      animation-name: fadeOutLeft;
+    }
+  }
+  &.ng-leave { 
+    .page { 
+      -webkit-animation-name: fadeInRight;
+      animation-name: fadeInRight;
+    }
+  }
+}
+
+/* Have to set height explicity on ui-view 
+to prevent collapsing during animation*/
+.ui-view-container {
+  position: relative;
+  height: 65px;
+}
+
+[ui-view].ng-enter, [ui-view].ng-leave {
+  position: absolute;
+  left: 0;
+  right: 0;
+  -webkit-transition:all .35s ease-in-out;
+  -moz-transition:all .35s ease-in-out;
+  -o-transition:all .35s ease-in-out;
+  transition:all .35s ease-in-out;
+}
+
+[ui-view].ng-enter {  
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+[ui-view].ng-enter-active {
+  //  opacity: 1;
+  //  -webkit-transform:scale3d(1, 1, 1);
+  //  -moz-transform:scale3d(1, 1, 1);
+  //  transform:scale3d(1, 1, 1);
+}
+
+[ui-view].ng-leave {
+  //  opacity: 1; 
+  //  -webkit-transform:translate3d(.5,.5,.5);
+  //  -moz-transform:translate3d(.5,.5,.5);
+  //  transform:translate3d(.5,.5,.5);
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+
+[ui-view].ng-leave-active {
+  //  -webkit-animation-name: slideOutLeft;
+  //  animation-name: slideOutLeft;
+  //  opacity: 0;
+  //  -webkit-transform:translate3d(100px, 0, 0);
+  //  -moz-transform:translate3d(100px, 0, 0);
+  //  transform:translate3d(100px, 0, 0);
+}
+
 
 
 .new-list { 
@@ -53,6 +132,10 @@ body, html {
 
   .list { 
     padding-bottom: 4rem;
+
+    .listitem { 
+      
+    }
 
     .entypo-block { 
       color: #00a0d4;

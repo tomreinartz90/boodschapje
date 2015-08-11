@@ -1,7 +1,7 @@
 /**
  */
 
-angular.module('boodschapje',['ui.router','ngResource','angular-toArrayFilter', 'angular.filter','boodschapje.controllers','boodschapje.services', 'autocomplete']);
+angular.module('boodschapje',['ui.router','ngResource','ngAnimate','angular-toArrayFilter', 'angular.filter','boodschapje.controllers','boodschapje.services', 'autocomplete']);
 
 angular.module('boodschapje').config(function($stateProvider,$filterProvider,$httpProvider,$sceDelegateProvider, $compileProvider){
   $sceDelegateProvider.resourceUrlWhitelist([
