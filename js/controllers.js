@@ -41,8 +41,10 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
     //ask api for login
     var loginViaApi = apiService.login({email: _this.email, password: _this.password});
     loginViaApi.$promise.then(function(data) {
-      console.log(loginViaApi);
       if(data.success){
+        localStorage.removeItem('data');
+        localStorage.removeItem('lists');
+        _this.accountSuccess = "Login succesvol.";
         //store login in local storage
         var login = { 
           email: _this.email,
@@ -52,10 +54,9 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
         //store data in local storage
         storeDataService.perm('login', login);
 
-        _this.accountSuccess = "Login succesvol.";
         window.setTimeout(function(){ 
           $state.go('^.home');
-        }, 850);
+        }, 3500);
       }
 
     });
@@ -143,7 +144,7 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
     _this.accountSuccess = "Uw account is aangemaakt.";
     window.setTimeout(function(){ 
       $state.go('^.home');
-    }, 850);
+    }, 1250);
   }
 
 });
@@ -172,8 +173,7 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
   _this.lists = listsService.getLists();
   _this.name = loginData.name;
   $scope.$on('lists-updated', function(events, lists){
-    if(typeof args === 'object')
-      _this.lists = args;
+      _this.lists = lists;
   })
 
 

@@ -1,6 +1,6 @@
 // collection of services
 
-services.factory('apiService', function($resource, getDataService, storeDataService){
+services.factory('apiService', function($q, $state, $resource, getDataService, storeDataService){
   var _this = {};
   var url =  "http://nas.tomreinartz.com/slim/";
 
@@ -16,6 +16,24 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
   };
   var loginData = getDataService.byKey('login') || {}; 
 
+  var dataInterceptor = function (response) {
+    var deferred = $q.defer();
+    var responseData = response.data;
+    if(responseData.success){ 
+      deferred.resolve(response.data);
+    } else { 
+      //handle errors from api
+      var responseError = response.data.results[0];
+      if(response.status == 401){ 
+        $state.go('^.login');
+        console.error(responseError);
+      }
+    }
+
+    return deferred.promise;
+  };  
+
+
   return $resource( url, {}, {
     login : {
       url: url + "login",
@@ -25,6 +43,10 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
         password: '@password', 
         email: '@email',
       },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
       timeout: 500
     },
     getLists : { 
@@ -33,6 +55,10 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       cache: false,
       params: { 
         token: loginData.token,
+      },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
       },
       timeout: 500
     },
@@ -45,6 +71,10 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
         category: '@category',
         listid: '@listid'
       },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
       timeout: 500
     },    
     updateListItem : { 
@@ -56,6 +86,10 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
         completed: '@completed',
         listitemid: '@listitemid'
       },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
       timeout: 500,
     },
     getUpdates : { 
@@ -64,6 +98,10 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       params: { 
         token: loginData.token,
         timestamp: '@timestamp'
+      },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
       },
       timeout: 500,
     }
@@ -157,7 +195,8 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
   }
   _this.getLatestListFromApi = function () { 
     //login is successfull lets update the lists
-    apiService.getLists({}, function(apiData) { 
+    var listData = apiService.getLists();
+    listData.$promise.then(function(apiData){
       if(apiData.success) {
         storeLists(apiData.results);
         if(_this.gettingUpdatesFromApi == false)
@@ -168,7 +207,8 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
   _this.gettingUpdatesFromApi = false;
   _this.getUpdatesFromApi =  function (timestamp) { 
     _this.gettingUpdatesFromApi = true;
-    apiService.getUpdates({timestamp: timestamp}, function(apiData){
+    var updateData = apiService.getUpdates({timestamp: timestamp});
+    updateData.$promise.then(function(apiData){
       if(apiData.success) {
         setTimeout(function() { 
           var lists = _this.getLists();
@@ -248,21 +288,7 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
   _this.newListItem = function (listId, listItemName, listItemCategory) { 
     if(listId !== undefined && typeof listItemName !== 'undefined' && typeof listItemCategory !== 'undefined'){
 
-      //      //model
-      //      var ListItem = function (name, category) { 
-      //        return { 
-      //          id: name + "-" + new Date().getTime(),
-      //          name: name,
-      //          category: 1,  
-      //          addedBy: loginData.name,
-      //          completedBy: '',
-      //          completed: false,
-      //          dateAdded: new Date().getTime()
-      //        }
-      //      }
-
       var loginData = getDataService.byKey('login');
-      //      var listItem = new ListItem(listItemName, listItemCategory);
 
       var newListItem = apiService.newListItem({
         name: listItemName, 
@@ -271,7 +297,6 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       });
       newListItem.$promise.then(function(data) {
         var listItem = data.results[0];
-        console.log(listItem);
         _this.updateLocalListItem(listItem);
       });
     }
