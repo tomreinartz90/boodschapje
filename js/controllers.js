@@ -1,6 +1,6 @@
 /**
  */
-controllers.controller('LoginController', function($scope,$rootScope,$state,$window,$document,getDataService, storeDataService){
+controllers.controller('LoginController', function($scope,$rootScope,$state,$window,$document,getDataService,apiService, storeDataService){
   var _this = this;
   _this.name = false,
     _this.email = '',
@@ -39,21 +39,26 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
     _this.loginSuccess = "Uw gegevens worden gecontrolleerd...";
 
     //ask api for login
+    var loginViaApi = apiService.login({email: _this.email, password: _this.password});
+    loginViaApi.$promise.then(function(data) {
+      console.log(loginViaApi);
+      if(data.success){
+        //store login in local storage
+        var login = { 
+          email: _this.email,
+          name: data.results[0].username,
+          token: data.results[0].hash,
+        };
+        //store data in local storage
+        storeDataService.perm('login', login);
 
-    //store data in local storage
+        _this.accountSuccess = "Login succesvol.";
+        window.setTimeout(function(){ 
+          $state.go('^.home');
+        }, 850);
+      }
 
-    //store login in local storage
-    var login = { 
-      name: _this.name,
-      email: _this.email,
-      password: _this.password
-    };
-
-    storeDataService.perm('login', login);
-    _this.accountSuccess = "Uw account is aangemaakt.";
-    window.setTimeout(function(){ 
-      $state.go('^.home');
-    }, 850);
+    });
   }
 });
 
@@ -158,24 +163,6 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
   }
 
   var loginData = getDataService.byKey('login');
-  console.log(loginData);
-  if(!loginData){
-    $state.go('^.login');
-    return;
-  } else { 
-    //login
-    apiService.login({}, function(data) { 
-      if (data.success == false) { 
-        $state.go('^.login');
-        return;
-      } else { 
-        //store secret
-        var loginData = getDataService.byKey('login');
-        loginData.secret = data.results[0].secret;
-        storeDataService.perm('login', loginData);
-      }
-    });
-  }
 
   //login is successfull lets update the lists
   listsService.getLatestListFromApi();
@@ -248,7 +235,25 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
   });
 
   $scope.$on('lists-updated', function(events, lists){
-    getList();
+    //update available list items
+    var newList = listsService.getList($stateParams.id);
+    angular.forEach(newList.list_items, function(newListItem, newListKey){
+      inlist = false;
+      angular.forEach(_this.thisList.list_items, function(listItem, listKey){
+        if(listItem.id == newListItem.id){
+          inlist = true;
+          if(newListItem.last_updated > listItem.last_updated){
+            _this.thisList.list_items[listKey] = newListItem;
+          }
+        }
+      });
+      if(!inlist){
+        var newList = [];
+        newList.push(newListItem);
+        _this.thisList.list_items = newList.concat(_this.thisList.list_items); 
+      }
+    });
+
   });
 
   var getList = function() { 
@@ -258,6 +263,7 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
     console.log(data);
     _this.thisList = data;
   }
+  getList();
 
   // comparator to sort seasons by seasonNumber
   function listComparator(a, b) {

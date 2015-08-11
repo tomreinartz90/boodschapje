@@ -31,11 +31,11 @@
         <div class="large-12 columns login">
           <div class="label alert" ng-show="login.loginError">{{login.loginError}}</div>
           <div class="label success" ng-show="login.loginSuccess">{{login.loginSuccess}}</div>
-          <a href="#" ng-click="login.login()" class="button expand">Login</a>
+          <a ng-click="login.login()" class="button expand">Login</a>
         </div>
 
         <div class="large-12 columns new-login">
-          <a href="#" ui-sref="createAccount" class="text-center small-12 columns">Nog geen account?</a>
+          <a ui-sref="createAccount" class="text-center small-12 columns">Nog geen account?</a>
         </div>
 
       </div>

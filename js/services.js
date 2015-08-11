@@ -22,8 +22,8 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       method: 'get',
       cache: false,
       params: { 
-        password: loginData.password, 
-        email: loginData.email,
+        password: '@password', 
+        email: '@email',
       },
       timeout: 500
     },
@@ -32,17 +32,15 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       method: 'get',
       cache: false,
       params: { 
-        email: loginData.email,
-        secret: loginData.secret, 
+        token: loginData.token,
       },
       timeout: 500
     },
     newListItem : { 
       url : url + "new-list-item",
-      method: 'post',
+      method: 'get',
       params: { 
-        email: loginData.email,
-        secret: loginData.secret,
+        token: loginData.token,
         name: '@name',
         category: '@category',
         listid: '@listid'
@@ -53,8 +51,7 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       url : url + "update-list-item",
       method: 'post',
       params: { 
-        email: loginData.email,
-        secret: loginData.secret,
+        token: loginData.token,
         name: '@name',
         completed: '@completed',
         listitemid: '@listitemid'
@@ -65,9 +62,8 @@ services.factory('apiService', function($resource, getDataService, storeDataServ
       url : url + "updates",
       method: 'get',
       params: { 
-        email: loginData.email,
-        secret: loginData.secret,
-        timestamp: '@timestamp',
+        token: loginData.token,
+        timestamp: '@timestamp'
       },
       timeout: 500,
     }
