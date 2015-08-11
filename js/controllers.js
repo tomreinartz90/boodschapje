@@ -56,7 +56,7 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
 
         window.setTimeout(function(){ 
           $state.go('^.home');
-        }, 3500);
+        }, 350);
       }
 
     });

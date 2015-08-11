@@ -1,6 +1,6 @@
 // collection of services
 
-services.factory('apiService', function($q, $state, $resource, getDataService, storeDataService){
+services.factory('apiService', function($q, $rootScope, $state, $resource, getDataService, storeDataService){
   var _this = {};
   var url =  "http://nas.tomreinartz.com/slim/";
 
@@ -14,7 +14,8 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
     genre: "@_genre",
     order_by: "desc" //desc asc //aflopend oplopend
   };
-  var loginData = getDataService.byKey('login') || {}; 
+
+
 
   var dataInterceptor = function (response) {
     var deferred = $q.defer();
@@ -29,10 +30,21 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
         console.error(responseError);
       }
     }
-
     return deferred.promise;
-  };  
+  }; 
 
+  //  var loginDataFunction = function () { 
+  //    var loginData = getDataService.byKey('login'); 
+  //    if($rootScope.data != undefined)
+  //      if($rootScope.data['login'] != undefined)
+  //        loginData = '@token';
+  //    console.log(loginData);
+  //    return loginData;
+  //  }
+  if($rootScope.data == undefined){
+    $rootScope.data = {login: getDataService.byKey('login')};
+    console.log($rootScope.data);
+  }
 
   return $resource( url, {}, {
     login : {
@@ -54,7 +66,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
       method: 'get',
       cache: false,
       params: { 
-        token: loginData.token,
+        token: '@token',
       },
       interceptor: {
         response: dataInterceptor,
@@ -66,7 +78,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
       url : url + "new-list-item",
       method: 'get',
       params: { 
-        token: loginData.token,
+        token: '@token',
         name: '@name',
         category: '@category',
         listid: '@listid'
@@ -81,7 +93,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
       url : url + "update-list-item",
       method: 'post',
       params: { 
-        token: loginData.token,
+        token: '@token',
         name: '@name',
         completed: '@completed',
         listitemid: '@listitemid'
@@ -96,7 +108,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
       url : url + "updates",
       method: 'get',
       params: { 
-        token: loginData.token,
+        token: '@token',
         timestamp: '@timestamp'
       },
       interceptor: {
@@ -108,7 +120,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
   });
 
 
-}).service('storeDataService',function(){
+}).service('storeDataService',function($rootScope){
   //temp will be loaded first, then perm memory will be loaded
   this.temp = function(key, value){ 
     var data = new Object();
@@ -120,12 +132,13 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
     }
 
     //get storage
-    data = JSON.parse(sessionStorage.getItem('data'));
+    data = $rootScope.data || JSON.parse(sessionStorage.getItem('data'));
     if(typeof data == 'undefined' || data == null)
       data = new Object();
     data[key] = value;
     //store data
     sessionStorage.setItem('data', JSON.stringify(data));
+    data
   }
   //this will be loaded at last
   this.perm = function(key, value){
@@ -137,7 +150,11 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
     }
 
     //get storage
-    data = JSON.parse(localStorage.getItem('data'));
+    if($rootScope.data != undefined)
+      data = $rootScope.data;
+    else 
+      data = JSON.parse(localStorage.getItem('data'));
+
     if(data === null)
       data = new Object();
     //change value
@@ -146,20 +163,26 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
     }
     data[key] = value;
     //store data
+    $rootScope.data = data;
+    console.log($rootScope.data);
     localStorage.setItem('data', JSON.stringify(data));
+    return true;
   }
 
   var checkKeyAndValue = function(key, value) { 
     return !((typeof key == undefined || typeof value === undefined) && key.length < 2 );
   }
 
-  }).service('getDataService',function(){
+  }).service('getDataService',function($rootScope){
   this.byKey = function (key) { 
     var sessionStored = false,
         sessionData = new Object(),
         localStored = false,
         localData = new Object(),
         data = null;
+    if($rootScope.data != undefined)
+      if($rootScope.data[key] != undefined)
+        return $rootScope.data[key];
 
     sessionData = JSON.parse(sessionStorage.getItem('data'));
     localData = JSON.parse(localStorage.getItem('data'));
@@ -195,7 +218,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
   }
   _this.getLatestListFromApi = function () { 
     //login is successfull lets update the lists
-    var listData = apiService.getLists();
+    var listData = apiService.getLists({token: $rootScope.data.login.token});
     listData.$promise.then(function(apiData){
       if(apiData.success) {
         storeLists(apiData.results);
@@ -207,7 +230,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
   _this.gettingUpdatesFromApi = false;
   _this.getUpdatesFromApi =  function (timestamp) { 
     _this.gettingUpdatesFromApi = true;
-    var updateData = apiService.getUpdates({timestamp: timestamp});
+    var updateData = apiService.getUpdates({timestamp: timestamp, token: $rootScope.data.login.token});
     updateData.$promise.then(function(apiData){
       if(apiData.success) {
         setTimeout(function() { 
@@ -293,7 +316,8 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
       var newListItem = apiService.newListItem({
         name: listItemName, 
         category: listItemCategory, 
-        listid: listId
+        listid: listId,
+        token: $rootScope.data.login.token
       });
       newListItem.$promise.then(function(data) {
         var listItem = data.results[0];
@@ -312,6 +336,7 @@ services.factory('apiService', function($q, $state, $resource, getDataService, s
     var lists = this.getLists();
 
     newListItem.listitemid = listItemId;
+    newListItem.token = $rootScope.data.login.token;
     //ask api for update
     var updateListItem = apiService.updateListItem(newListItem);
     updateListItem.$promise.then(function(data){
