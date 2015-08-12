@@ -23,7 +23,6 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
         var responseError = response.data.results[0];
         if(response.status == 401){ 
           $state.go('^.login');
-          console.error(responseError);
         }
       }
     }
@@ -98,7 +97,7 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
   });
 
 
-}).service('storeDataService',function($rootScope){
+}).service('storeDataService',function($rootScope, $http){
   //temp will be loaded first, then perm memory will be loaded
   this.temp = function(key, value){ 
     var data = new Object();
@@ -126,6 +125,11 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
       console.warn("storing data requires the key: " + key + " and value: " + value + " to be set")
       return false;
     }
+
+    //check if it contains login data
+    //then store it in the header, resolves
+    if(key == 'login' && value.token != undefined)
+      $http.defaults.headers.common['X-AUTH-TOKEN'] = value.token;
 
     //get storage
     if(data === null)
