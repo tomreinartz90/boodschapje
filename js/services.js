@@ -1,50 +1,34 @@
 // collection of services
 
-services.factory('apiService', function($q, $rootScope, $state, $resource, getDataService, storeDataService){
+services.factory('apiService', function($q, $rootScope, $http, $state, $resource, getDataService, storeDataService){
   var _this = {};
   var url =  "http://nas.tomreinartz.com/slim/";
 
-  var settings = {
-    limit: "24", //max 50
-    page: '@_page',
-    minimum_rating: "@_minimum_rating", //vanaf IMDB rating 7
-    sort_by: "@_sort_by",
-    quality: "@_quality", //All, 720p 1080p 3D
-    query_term: "@_query_term",
-    genre: "@_genre",
-    order_by: "desc" //desc asc //aflopend oplopend
-  };
-
-
+  function setHttpProviderCommonHeaderToken(){
+    var loginData = getDataService.byKey('login')
+    var token = loginData.token;
+    $http.defaults.headers.common['X-AUTH-TOKEN'] = token;
+    return;
+  }  
+  setHttpProviderCommonHeaderToken();
 
   var dataInterceptor = function (response) {
     var deferred = $q.defer();
     var responseData = response.data;
-    if(responseData.success){ 
-      deferred.resolve(response.data);
-    } else { 
-      //handle errors from api
-      var responseError = response.data.results[0];
-      if(response.status == 401){ 
-        $state.go('^.login');
-        console.error(responseError);
+    if(responseData !== null){
+      if(responseData.success){ 
+        deferred.resolve(response.data);
+      } else { 
+        //handle errors from api
+        var responseError = response.data.results[0];
+        if(response.status == 401){ 
+          $state.go('^.login');
+          console.error(responseError);
+        }
       }
     }
     return deferred.promise;
   }; 
-
-  //  var loginDataFunction = function () { 
-  //    var loginData = getDataService.byKey('login'); 
-  //    if($rootScope.data != undefined)
-  //      if($rootScope.data['login'] != undefined)
-  //        loginData = '@token';
-  //    console.log(loginData);
-  //    return loginData;
-  //  }
-  if($rootScope.data == undefined){
-    $rootScope.data = {login: getDataService.byKey('login')};
-    console.log($rootScope.data);
-  }
 
   return $resource( url, {}, {
     login : {
@@ -65,9 +49,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
       url: url + "lists",
       method: 'get',
       cache: false,
-      params: { 
-        token: '@token',
-      },
       interceptor: {
         response: dataInterceptor,
         responseError: dataInterceptor
@@ -78,7 +59,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
       url : url + "new-list-item",
       method: 'get',
       params: { 
-        token: '@token',
         name: '@name',
         category: '@category',
         listid: '@listid'
@@ -93,7 +73,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
       url : url + "update-list-item",
       method: 'post',
       params: { 
-        token: '@token',
         name: '@name',
         completed: '@completed',
         listitemid: '@listitemid'
@@ -108,7 +87,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
       url : url + "updates",
       method: 'get',
       params: { 
-        token: '@token',
         timestamp: '@timestamp'
       },
       interceptor: {
@@ -150,11 +128,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
     }
 
     //get storage
-    if($rootScope.data != undefined)
-      data = $rootScope.data;
-    else 
-      data = JSON.parse(localStorage.getItem('data'));
-
     if(data === null)
       data = new Object();
     //change value
@@ -163,8 +136,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
     }
     data[key] = value;
     //store data
-    $rootScope.data = data;
-    console.log($rootScope.data);
     localStorage.setItem('data', JSON.stringify(data));
     return true;
   }
@@ -180,9 +151,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
         localStored = false,
         localData = new Object(),
         data = null;
-    if($rootScope.data != undefined)
-      if($rootScope.data[key] != undefined)
-        return $rootScope.data[key];
 
     sessionData = JSON.parse(sessionStorage.getItem('data'));
     localData = JSON.parse(localStorage.getItem('data'));
@@ -218,7 +186,7 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
   }
   _this.getLatestListFromApi = function () { 
     //login is successfull lets update the lists
-    var listData = apiService.getLists({token: $rootScope.data.login.token});
+    var listData = apiService.getLists();
     listData.$promise.then(function(apiData){
       if(apiData.success) {
         storeLists(apiData.results);
@@ -230,7 +198,7 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
   _this.gettingUpdatesFromApi = false;
   _this.getUpdatesFromApi =  function (timestamp) { 
     _this.gettingUpdatesFromApi = true;
-    var updateData = apiService.getUpdates({timestamp: timestamp, token: $rootScope.data.login.token});
+    var updateData = apiService.getUpdates({timestamp: timestamp});
     updateData.$promise.then(function(apiData){
       if(apiData.success) {
         setTimeout(function() { 
@@ -317,7 +285,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
         name: listItemName, 
         category: listItemCategory, 
         listid: listId,
-        token: $rootScope.data.login.token
       });
       newListItem.$promise.then(function(data) {
         var listItem = data.results[0];
@@ -336,7 +303,6 @@ services.factory('apiService', function($q, $rootScope, $state, $resource, getDa
     var lists = this.getLists();
 
     newListItem.listitemid = listItemId;
-    newListItem.token = $rootScope.data.login.token;
     //ask api for update
     var updateListItem = apiService.updateListItem(newListItem);
     updateListItem.$promise.then(function(data){
