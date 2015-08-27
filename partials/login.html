@@ -1,25 +1,30 @@
-<div class="page login-page">
-  <form ng-controller="LoginController as login" class="login-page">
-
-
+<div class="page login-page"  ng-controller="LoginController as login" >
+  <div class="login-form sticky bottom">
+    <div class="row" ng-show="!login.name">
+      <div class="small-8 columns intro">
+        <h2 class="welcome"> Welkom bij</h2>
+        <h2 class="welcome-at"> deboodschapp</h2>
+      </div>
+    </div>    
     <div class="row" ng-show="login.name">
-      <div class="large-12 columns">
-        <h3>Welkom terug {{login.name}}</h3>
+      <div class="small-4 columns intro">
+        <h2 class="welcome"> Welkom terug</h2>
+        <h2 class="welcome-at"> {{login.name}}</h2>
       </div>
     </div>
-    <div class="login-form sticky bottom">
-      <div class="row">
-        <div class="large-12 columns">
-          <label>Email
-            <input type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
-          </label>
-        </div>
+    <div class="row">
+      <div class="small-8 columns">
+        <label>Email
+          <input type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
+        </label>
       </div>
+    </div>
+    <form class="login-page">
       <div class="row">
-        <div class="large-12 columns">
+        <div class="small-8 columns">
           <label>Wachtwoord
             <div class="row collapse">
-              <div class="small-10 columns">
+              <div class="small-6 columns">
                 <input ng-model="login.password" type="{{login.passwordVisible  ? 'text':'password'}}" placeholder="{{login.passwordPlaceholder}}">
               </div>
               <div class="small-2 columns">
@@ -28,17 +33,17 @@
             </div>
           </label>
         </div>
-        <div class="large-12 columns login">
+        <div class="small-8 columns login">
           <div class="label alert" ng-show="login.loginError">{{login.loginError}}</div>
           <div class="label success" ng-show="login.loginSuccess">{{login.loginSuccess}}</div>
           <a ng-click="login.login()" class="button expand">Login</a>
         </div>
 
-        <div class="large-12 columns new-login">
-          <a ui-sref="createAccount" class="text-center small-12 columns">Nog geen account?</a>
+        <div class="small-8 columns new-login">
+          <a ui-sref="createAccount" class="login text-center small-12 columns create-account">Nog geen account?</a>
         </div>
 
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

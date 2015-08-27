@@ -2,11 +2,14 @@
 
 services.factory('apiService', function($q, $rootScope, $http, $state, $resource, getDataService, storeDataService){
   var _this = {};
-  var url =  "http://nas.tomreinartz.com/slim/";
+  var url =  "http://boodschappen.tomreinartz.com/api/";
 
   function setHttpProviderCommonHeaderToken(){
-    var loginData = getDataService.byKey('login')
-    var token = loginData.token;
+    var loginData = getDataService.byKey('login');
+    var token = undefined;
+    if(loginData != null)
+      var token = loginData.token;
+
     $http.defaults.headers.common['X-AUTH-TOKEN'] = token;
     return;
   }  
@@ -44,10 +47,39 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
       },
       timeout: 500
     },
+    newUser : {
+      url: url + "account",
+      method: 'post',
+      cache: false,
+      params: { 
+        username: '@username',
+        password: '@password', 
+        email: '@email',
+      },
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
+      timeout: 500
+    },
     getLists : { 
       url: url + "lists",
       method: 'get',
       cache: false,
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
+      timeout: 500
+    }, 
+    newList : { 
+      url: url + "new-list",
+      method: 'post',
+      cache: false,      
+      params: { 
+        name: '@name',
+        category: '@category',
+      },
       interceptor: {
         response: dataInterceptor,
         responseError: dataInterceptor
@@ -254,37 +286,25 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
 
   _this.newList = function (name, category) { 
     //get current lists
-    //    var lists = _this.getLists();
-    if (!lists)
-      lists = new Object();
-    var id = name + "-" + new Date().getTime();
+    var lists = _this.getLists();
     list = {
-      id: id,
       name: name,
       category: category,
-      list_items: {}
     }
-    //only store if list is undefined
-    if(typeof lists[id] === 'undefined')
-      lists[id] = list;
-    else { 
-      id = name + "-" + new Date().getTime();
-      list.id = id;
-      lists[id] = list;
-    }
-
 
     //store lists in localstorage
-    storeLists(lists);
-
-    return lists;
+    var newlist = apiService.newList(list);
+    newlist.$promise.then(function(data){
+      var listdata = data.results[0];
+      console.log(listdata);
+      lists.push(listdata)
+      storeLists(lists);
+      return data;
+    });
   };
 
   _this.newListItem = function (listId, listItemName, listItemCategory) { 
     if(listId !== undefined && typeof listItemName !== 'undefined' && typeof listItemCategory !== 'undefined'){
-
-      var loginData = getDataService.byKey('login');
-
       var newListItem = apiService.newListItem({
         name: listItemName, 
         category: listItemCategory, 

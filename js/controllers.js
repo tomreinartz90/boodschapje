@@ -63,7 +63,7 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
   }
 });
 
-controllers.controller('AccountCreationController', function($scope,$rootScope,$state,$window,$document,storeDataService){
+controllers.controller('AccountCreationController', function($scope,$rootScope,$state,$window,$document,storeDataService, apiService){
   var _this = this;
   _this.name = '',
     _this.namePlaceholder = 'Tom Jones',
@@ -136,15 +136,25 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
 
     //store login in local storage
     var login = { 
-      name: _this.name,
+      username: _this.name,
       email: _this.email,
       password: _this.password
     };
-    storeDataService.perm('login', login);
-    _this.accountSuccess = "Uw account is aangemaakt.";
-    window.setTimeout(function(){ 
-      $state.go('^.home');
-    }, 1250);
+    
+    
+    var newUser = apiService.newUser(login);
+    newUser.$promise.then(function(data){
+      localStorage.deleteItem('login');
+      login.password = null;
+      storeDataService.perm('login', login);
+      
+      _this.accountSuccess = "Uw account is aangemaakt.";
+      
+      window.setTimeout(function(){ 
+        $state.go('^.home');
+      }, 1250);    
+    });
+
   }
 
 });
@@ -173,19 +183,17 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
   _this.lists = listsService.getLists();
   _this.name = loginData.name;
   $scope.$on('lists-updated', function(events, lists){
-      _this.lists = lists;
+    _this.lists = lists;
   })
 
 
   _this.addlist = function () {
-    console.log(_this.newlist);
     if(_this.newlist.name.length > 2 ){
       listsService.newList(_this.newlist.name, _this.newlist.category);
       _this.newlist.name = '';
       _this.newlist.showForm = false;
     }
     //refresh lists
-    _this.lists = listsService.getLists();
   }
 
   _this.totalListItems = function (list) { 
@@ -220,6 +228,8 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
   _this.filter = function(){ 
     return false; 
   }
+  
+  _this.username = loginData.name;
 
 
   _this.addNewListItem = { 

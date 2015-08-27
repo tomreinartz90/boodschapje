@@ -1,13 +1,20 @@
 <div ng-controller="homeController as home" class="home-page page">
-  <div class="row name header">
+  <div class="name header">
     <div class="action"></div>
     <div class="title"><!--{{home.name}}--> Uw Lijsten</div>
   </div>
   <div class="row list">
-    <div class="row collapse listitem panel" ng-repeat="list in home.lists"  ui-sref='viewList({id:list.listid})'>
-      <div class="small-1 columns image"><span class="entypo-record"></span></div>
-      <div class="small-9 columns name">{{list.name}}</div>
-      <div class="small-2 columns total">{{home.totalListItems(list)}} </div>
+    <div class="row collapse listitem panel" ng-repeat="list in home.lists" >
+      <div class="small-1 columns image"  ui-sref='viewList({id:list.listid})'><span class="entypo-record"></span></div>
+      <div class="small-6 columns name"  ui-sref='viewList({id:list.listid})'>{{home.totalListItems(list)}} - {{list.name}}</div>
+      <div class="small-1 columns action">
+        <span class="entypo-dot-3" ng-show="!showMenu"></span>
+        <ul class="f-dropdown !open f-open-dropdown" data-dropdown-content="" aria-hidden="false">
+          <li><a href="#">This is a link</a></li>
+          <li><a href="#">This is another</a></li>
+          <li><a href="#">Yet another</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -18,21 +25,16 @@
       <span ng-show="home.newlist.showForm" class="entypo-minus"></span>
     </div>
     <div class="new-list white-bg columns" ng-show="home.newlist.showForm">
-      <div class="large-12 columns">
-        <label>Naam
-          <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
-        </label>
-      </div>      
-      <div class="large-12 columns">
-        <label>Categorie
-          <select ng-model="home.newlist.category">
-            <option value="{{key}}" ng-selected="{{key == home.newlist.category}}"  ng-repeat="(key, value) in home.newlist.categories">{{value}}</option>
-          </select>
-        </label>
-      </div>
-      <div class="large-12 columns">
-        <div class="button" ng-click="home.addlist()">Toevoegen</div>
-      </div>
+      <label>Naam
+        <div class="row collapse">
+          <div class="small-7 columns">
+            <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
+          </div>      
+          <div class="small-1 add columns">
+            <div class="button postfix" ng-click="home.addlist()"><span class="entypo-plus"></span></div>
+          </div>
+        </div>
+      </label>
     </div>
   </div>
 </div>
