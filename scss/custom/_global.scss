@@ -137,6 +137,10 @@ to prevent collapsing during animation*/
   border-right: 0;
   border-top:  0;
   border-bottom-color: $primary-color;
+  -webkit-transition:opacity .2s ease-in-out;
+  -moz-transition:opacity .2s ease-in-out;
+  -o-transition:opacity .2s ease-in-out;
+  transition:opacity .2s ease-in-out;
 }
 
 .list-page { 

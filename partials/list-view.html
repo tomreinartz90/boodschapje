@@ -5,7 +5,7 @@
   </div>
   <div class="row list">
     <div class="row collapse listitem panel" ng-class="{'complete': item.completed}" 
-         ng-repeat="item in list.thisList.list_items | orderBy: dateAdded">
+         ng-repeat="item in list.thisList.list_items track by item.id | orderBy: dateAdded">
       <div class="small-1 columns image" ng-click="list.listitem.complete(item)">
         <span ng-show="item.completed" class="entypo-check"></span>
         <span ng-show="!item.completed" class="entypo-right-open"></span>
@@ -43,7 +43,7 @@
       <label>Naam
         <div class="row collapse">
           <div class="small-7 columns">
-            <autocomplete click-activation="true" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.boodschappen" type="text"  />
+            <autocomplete click-activation="false" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.boodschappen" type="text"  />
           </div>      
           <div class="small-1 add columns">
             <div class="button postfix" ng-click="list.addlist()"><span class="entypo-plus"> </span></</div>

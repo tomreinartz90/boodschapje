@@ -140,16 +140,16 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
       email: _this.email,
       password: _this.password
     };
-    
-    
+
+
     var newUser = apiService.newUser(login);
     newUser.$promise.then(function(data){
-      localStorage.deleteItem('login');
+//      localStorage.deleteItem('login');
       login.password = null;
       storeDataService.perm('login', login);
-      
+
       _this.accountSuccess = "Uw account is aangemaakt.";
-      
+
       window.setTimeout(function(){ 
         $state.go('^.home');
       }, 1250);    
@@ -228,7 +228,7 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
   _this.filter = function(){ 
     return false; 
   }
-  
+
   _this.username = loginData.name;
 
 
@@ -239,7 +239,8 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
 
   //use data from service first
   listsService.getLatestListFromApi();
-
+  
+  var allProducts = [];
   _this.boodschappen = allProducts.filter(function(item, pos) {
     return allProducts.indexOf(item) == pos;
   });
@@ -320,10 +321,12 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
     var update = { 
       completed: !listItem.completed
     };
-    //fake success
+    //    fake success
     angular.forEach(_this.thisList.list_items, function(item, key){
-      if(item.id == listItem.id)
+      if(item.id == listItem.id){ 
+        console.log(_this.thisList.list_items[key]);
         _this.thisList.list_items[key].completed = update.completed;
+      }
     });
 
     listsService.updateListItem(listItem.id, update);    
