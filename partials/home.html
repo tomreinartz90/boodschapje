@@ -1,12 +1,13 @@
 <div ng-controller="homeController as home" class="home-page page">
   <div class="name header">
     <div class="action"></div>
-    <div class="title"><!--{{home.name}}--> Uw Lijsten</div>
+    <div class="title">
+      <!--{{home.name}}-->Uw Lijsten</div>
   </div>
   <div class="row list">
-    <div class="row collapse listitem panel" ng-repeat="list in home.lists" >
-      <div class="small-1 columns image"  ui-sref='viewList({id:list.listid})'><span class="entypo-record"></span></div>
-      <div class="small-6 columns name"  ui-sref='viewList({id:list.listid})'>{{home.totalListItems(list)}} - {{list.name}}</div>
+    <div class="row collapse listitem panel" ng-repeat="list in home.lists">
+      <div class="small-1 columns image" ui-sref='viewList({id:list.listid})'><span class="entypo-record"></span></div>
+      <div class="small-6 columns name" ui-sref='viewList({id:list.listid})'>{{home.totalListItems(list)}} - {{list.name}}</div>
       <div class="small-1 columns action">
         <span class="entypo-dot-3" ng-show="!showMenu"></span>
         <ul class="f-dropdown !open f-open-dropdown" data-dropdown-content="" aria-hidden="false">
@@ -25,16 +26,18 @@
       <span ng-show="home.newlist.showForm" class="entypo-minus"></span>
     </div>
     <div class="new-list white-bg columns" ng-show="home.newlist.showForm">
-      <label>Naam
-        <div class="row collapse">
-          <div class="small-7 columns">
-            <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
-          </div>      
-          <div class="small-1 add columns">
-            <div class="button postfix" ng-click="home.addlist()"><span class="entypo-plus"></span></div>
+      <form ng-submit="home.addlist()">
+        <label>Naam
+          <div class="row collapse">
+            <div class="small-7 columns">
+              <input ng-model="home.newlist.name" type="text" ng-model="login.email" placeholder="{{login.emailPlaceholder}}" />
+            </div>
+            <div class="small-1 add columns">
+              <div class="button postfix" ng-click="home.addlist()"><span class="entypo-plus"></span></div>
+            </div>
           </div>
-        </div>
-      </label>
+        </label>
+      </form>
     </div>
   </div>
 </div>
