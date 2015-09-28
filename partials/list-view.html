@@ -1,11 +1,12 @@
 <div ng-controller="ListController as list" class="list-page page">
   <div class="header">
-    <div class="action" ui-sref="home"><div class="back entypo-left-open-big"></div></div>
+    <div class="action" ui-sref="home">
+      <div class="back entypo-left-open-big"></div>
+    </div>
     <div class="title">{{list.name}}</div>
   </div>
   <div class="row list">
-    <div class="row collapse listitem panel" ng-class="{'complete': item.completed}" 
-         ng-repeat="item in list.thisList.list_items track by item.id">
+    <div class="row collapse listitem panel" ng-class="{'complete': item.completed}" ng-repeat="item in list.thisList.list_items track by item.id">
       <div class="small-1 columns image" ng-click="list.listitem.complete(item)">
         <span ng-show="item.completed" class="entypo-check"></span>
         <span ng-show="!item.completed" class="entypo-right-open"></span>
@@ -16,7 +17,7 @@
         </div>
         <div ng-show="editName" class="row collapse edit-item">
           <div class="small-6 columns">
-            <input ng-model="newName" type="text" placeholder="{{item.name}}"/>
+            <input ng-model="newName" type="text" placeholder="{{item.name}}" />
           </div>
           <div class="small-1 add columns">
             <div class="button postfix" ng-click="list.listitem.updateName(newName, item); editName = false" placeholder="{{item.name}}"><span class="entypo-check"> </span></div>
@@ -35,12 +36,6 @@
 
 
   <div class="row sticky bottom">
-<!--
-    <div class="button right add" ng-click="list.addNewListItem.showForm = !list.addNewListItem.showForm">
-      <span ng-show="!list.addNewListItem.showForm" class="entypo-plus"></span>
-      <span ng-show="list.addNewListItem.showForm" class="entypo-minus"></span>
-    </div>
--->
     <div class="new-list columns" >
       <form ng-submit="list.addlist()">
         <label>
@@ -48,6 +43,7 @@
             <div class="small-7 columns">
               <autocomplete on-type="list.getSuggestions" click-activation="false" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.suggestions" type="text"  />
             </div>      
+
             <div class="small-1 add columns">
               <div class="button postfix" ng-click="list.addlist()"><span class="entypo-plus"> </span></div>
             </div>
