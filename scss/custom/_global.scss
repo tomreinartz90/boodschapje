@@ -18,6 +18,7 @@ body, html {
   right: 0;
   &.bottom { 
     bottom: 0; 
+    z-index: 200;
   }
   &.top { 
     top: 0; 
@@ -113,13 +114,14 @@ to prevent collapsing during animation*/
 
 
 .button.expand { 
-  box-shadow: 0 0 .5rem rgba(0,0,0,0.3);
+  box-shadow: 0 0 .5rem rgba(0,0,0,0.2);
 }
 
 
 .new-list { 
-  box-shadow: 0 0 4rem rgba(0,0,0,0.3);
+  box-shadow: 0 -.25rem .5rem rgba(0,0,0,0.2);
   padding: 1rem;
+  background-color: $snow;
 }
 
 .white-bg { 
@@ -141,6 +143,7 @@ to prevent collapsing during animation*/
   -moz-transition:opacity .2s ease-in-out;
   -o-transition:opacity .2s ease-in-out;
   transition:opacity .2s ease-in-out;
+  background-color: $white!important;
 }
 
 .list-page { 
@@ -169,8 +172,9 @@ to prevent collapsing during animation*/
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1.5rem;
-    line-height: 1.7;
+    line-height: 1.5;
     margin-left: 0.5rem;
+    padding: 0;
   }
   .entypo-check {
     color: $success-color;
@@ -186,16 +190,35 @@ to prevent collapsing during animation*/
     text-align: center;
   }
   .listitem { 
-
     padding: 1rem 0 1rem 0;
+    position: relative;
+    top: 0;
+
+    -webkit-transition: all 0.3s ease;                  
+    -moz-transition: all 0.3s ease;                 
+    -o-transition: all 0.3s ease;   
+    -ms-transition: all 0.3s ease;          
+    transition: all 0.3s ease;
+
+    &.selected { 
+      position: relative;
+      height: 150vh;
+      top: -10%;
+      z-index: 1000;
+      width: 100%;
+      height: 120%;
+      max-width: 640px;
+      box-shadow: 0 0 .5rem rgba(0, 0, 0, 0.2);
+    }
   }
   .add .button { 
     border-radius: 4rem;
     width: 2.5rem;
     height: 2.5rem;
     font-size: 1.5rem;
-    line-height: 1.7;
+    line-height: 1.5;
     margin-left: 0.5rem;
+    padding: 0;
   }
 }
 
@@ -226,7 +249,7 @@ div.panel {
 .header { 
   //  text-shadow: inset 0 0 2px rgba(0,0,0,0.6);
   background-color: $primary-color;
-  box-shadow: 0 0 1rem rgba(0,0,0,0.3);
+  box-shadow: 0 .25rem .5rem rgba(0,0,0,0.2);
   position: fixed;
   width: 100%;
   z-index: 200;
@@ -282,9 +305,10 @@ div.panel {
   border-right: 1px solid #888;
   border-top: 1px solid #888;
   z-index: 1;
-  height: 40vh;
-  top: -40vh;
+  height: 50vh;
+  top: -50vh;
   overflow: auto;
+  background-color: $white;
 }
 
 .autocomplete li {

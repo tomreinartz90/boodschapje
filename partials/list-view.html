@@ -5,7 +5,7 @@
   </div>
   <div class="row list">
     <div class="row collapse listitem panel" ng-class="{'complete': item.completed}" 
-         ng-repeat="item in list.thisList.list_items track by item.id | orderBy: dateAdded">
+         ng-repeat="item in list.thisList.list_items track by item.id">
       <div class="small-1 columns image" ng-click="list.listitem.complete(item)">
         <span ng-show="item.completed" class="entypo-check"></span>
         <span ng-show="!item.completed" class="entypo-right-open"></span>
@@ -35,21 +35,25 @@
 
 
   <div class="row sticky bottom">
+<!--
     <div class="button right add" ng-click="list.addNewListItem.showForm = !list.addNewListItem.showForm">
       <span ng-show="!list.addNewListItem.showForm" class="entypo-plus"></span>
       <span ng-show="list.addNewListItem.showForm" class="entypo-minus"></span>
     </div>
-    <div class="new-list white-bg columns" ng-show="list.addNewListItem.showForm">
-      <label>Naam
-        <div class="row collapse">
-          <div class="small-7 columns">
-            <autocomplete click-activation="false" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.boodschappen" type="text"  />
-          </div>      
-          <div class="small-1 add columns">
-            <div class="button postfix" ng-click="list.addlist()"><span class="entypo-plus"> </span></</div>
+-->
+    <div class="new-list columns" >
+      <form ng-submit="list.addlist()">
+        <label>
+          <div class="row collapse">
+            <div class="small-7 columns">
+              <autocomplete on-type="list.getSuggestions" click-activation="false" ng-model="list.addNewListItem.name" attr-placeholder="uw boodschap" data="list.suggestions" type="text"  />
+            </div>      
+            <div class="small-1 add columns">
+              <div class="button postfix" ng-click="list.addlist()"><span class="entypo-plus"> </span></div>
             </div>
           </div>
-          </label>
-        </div>
+        </label>
+      </form>
     </div>
   </div>
+</div>

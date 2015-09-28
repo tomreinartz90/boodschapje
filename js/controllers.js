@@ -56,7 +56,7 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
 
         window.setTimeout(function(){ 
           $state.go('^.home');
-        }, 350);
+        }, 50);
       }
 
     });
@@ -144,7 +144,7 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
 
     var newUser = apiService.newUser(login);
     newUser.$promise.then(function(data){
-//      localStorage.deleteItem('login');
+      //      localStorage.deleteItem('login');
       login.password = null;
       storeDataService.perm('login', login);
 
@@ -164,7 +164,8 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
   var _this = this;
   _this.lists = new Object,
     _this.activeList = '',
-    _this.name = '';
+    _this.name = '',
+    _this.class = '';
 
   _this.newlist = {
     name: '',
@@ -207,10 +208,18 @@ controllers.controller('homeController', function($scope,$rootScope,$state,$wind
     return list.list_items.length;
   }
 
+  _this.showList = function (list) { 
+    console.log(list);
+    list.class = "selected";
+    window.setTimeout(function(){
+      $state.go('viewList', {id:list.listid});
+    }, 300);
+  }
+
 });
 
 
-controllers.controller('ListController', function($scope,$rootScope,$state,$stateParams,$window,$document,getDataService, listsService){
+controllers.controller('ListController', function($scope,$rootScope,$state,$stateParams,$window,$document,getDataService, listsService,apiService){
   var loginData = getDataService.byKey('login');
   if(!loginData){
     $state.go('^.login');
@@ -239,7 +248,7 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
 
   //use data from service first
   listsService.getLatestListFromApi();
-  
+
   var allProducts = [];
   _this.boodschappen = allProducts.filter(function(item, pos) {
     return allProducts.indexOf(item) == pos;
@@ -312,6 +321,23 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
   //holder for listitem methods
   _this.listitem = new Object();
 
+
+  /*
+  ** get suggestions from api
+  ** param q = input
+  */
+  _this.getSuggestions = function (input) {
+    //    console.log(input);
+    _this.suggestions = [];
+    if(input.length > 1){
+      var suggestions = apiService.getSuggestions({q: input});
+      suggestions.$promise.then(function(data) {
+        console.log(data.results);
+        _this.suggestions = data.results;
+      });
+    }
+  };
+
   /*
   ** set listitem completed state to !completed state
   ** @param listItem: object, original listitem
@@ -330,7 +356,6 @@ controllers.controller('ListController', function($scope,$rootScope,$state,$stat
     });
 
     listsService.updateListItem(listItem.id, update);    
-
   }
 
   /*

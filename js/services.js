@@ -114,6 +114,18 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
       },
       timeout: 500,
     },
+    getSuggestions : { 
+      url: url + 'suggestions',
+      method: 'get',
+      params: {
+        q: '@q'
+      },    
+      interceptor: {
+        response: dataInterceptor,
+        responseError: dataInterceptor
+      },
+      timeout: 500
+    },
     getUpdates : { 
       url : url + "updates",
       method: 'get',
