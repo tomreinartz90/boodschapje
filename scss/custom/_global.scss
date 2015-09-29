@@ -118,10 +118,14 @@ to prevent collapsing during animation*/
 }
 
 
-.new-list { 
-  box-shadow: 0 -.25rem .5rem rgba(0,0,0,0.2);
-  padding: 1rem;
-  background-color: $snow;
+.new-list .autocomplete,
+.new-list .button { 
+  box-shadow: 0 0 .5rem rgba(0,0,0,0.2);
+  //  background-color: $snow;
+  margin-bottom: .25rem;
+  input { 
+    margin-bottom: .25rem; 
+  }
 }
 
 .white-bg { 

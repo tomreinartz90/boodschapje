@@ -44,7 +44,8 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
       if(data.success){
         localStorage.removeItem('data');
         localStorage.removeItem('lists');
-        _this.accountSuccess = "Login succesvol.";
+        _this.loginError = false;
+        _this.loginSuccess = "Login succesvol.";
         //store login in local storage
         var login = { 
           email: _this.email,
@@ -57,6 +58,10 @@ controllers.controller('LoginController', function($scope,$rootScope,$state,$win
         window.setTimeout(function(){ 
           $state.go('^.home');
         }, 50);
+      } else { 
+        _this.loginSuccess = false;
+        if(data.results[0] = "login failed")
+          _this.loginError = "Uw gebruikersnaam of wachtwoord is onjuist";
       }
 
     });
@@ -117,19 +122,27 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
     if(_this.password.length > 5){
       _this.passwordSuccess = true;
       _this.passwordError = false;
+    } else { 
+      _this.passwordSuccess = false;
+      _this.passwordError = "Een wachtwoord bestaat uit minimaal 6 tekens";
     }
   }
 
   _this.createAccount = function () { 
-    if(_this.emailerror || _this.nameError || _this.passwordError)
+    console.log('submit form');
+    if(_this.emailError !== false || _this.nameError !== false || _this.passwordError !== false ){ 
       _this.accountError = "Er is een fout opgetreden bij het aanmaken van uw account, probeer het nogmaals";
-    if(_this.email.length < 5 || _this.name.length < 2 || _this.password.length < 6)
+      return;
+    }
+    if(_this.email.length < 5 || _this.name.length < 2 || _this.password.length < 6){ 
       _this.accountError = "Niet alle velden zijn volledig ingevuld";
+      return;
+    }
+    //in any other case
+    _this.accountError = false;
 
     //return if there is an error
-    if(_this.accountError)
-      //      return false;
-      _this.accountSuccess = "Alles is in orde, uw account wordt aangemaakt.";
+    _this.accountSuccess = "Alles is in orde, uw account wordt aangemaakt.";
 
     //create new account via the API
     console.log(_this);
@@ -145,14 +158,23 @@ controllers.controller('AccountCreationController', function($scope,$rootScope,$
     var newUser = apiService.newUser(login);
     newUser.$promise.then(function(data){
       //      localStorage.deleteItem('login');
-      login.password = null;
-      storeDataService.perm('login', login);
 
-      _this.accountSuccess = "Uw account is aangemaakt.";
+      console.log(data);
+      if(data.success == true) {
+        login.password = null;
+        storeDataService.perm('login', login);
 
-      window.setTimeout(function(){ 
-        $state.go('^.home');
-      }, 1250);    
+        _this.accountSuccess = "Uw account is aangemaakt.";
+
+        window.setTimeout(function(){ 
+          $state.go('^.home');
+        }, 1250);   
+      } else { 
+        _this.accountSuccess = false;
+        if(data.results[0] = "duplicate email"){ 
+          _this.accountError = "Er bestaat al een account met dit emailadres" 
+        }
+      }
     });
 
   }

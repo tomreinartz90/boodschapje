@@ -26,6 +26,8 @@ services.factory('apiService', function($q, $rootScope, $http, $state, $resource
         var responseError = response.data.results[0];
         if(response.status == 401){ 
           $state.go('^.login');
+        } else { 
+          deferred.resolve(response.data);
         }
       }
     }
