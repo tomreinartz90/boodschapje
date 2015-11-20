@@ -1,11 +1,13 @@
-<div class="page">
-  <form ng-controller="AccountCreationController as account" class="new-account-page" novalidate>
+<div class="page" ng-controller="AccountCreationController as account" >
+  <form class="new-account-page" ng-submit="account.createAccount()" >
     <div class="sticky bottom">
       <div class="row ">
         <div class="small-8 columns">
           <label>Welkom<span ng-show="!account.nameSuccess">, hoe heet je?</span>
             <span ng-show="account.nameSuccess">{{account.nameSuccess}}</span>
-            <input ng-model="account.name" ng-model-options="{debounce: 350}" ng-change="account.validateName()" type="text" placeholder="{{account.namePlaceholder}}" />
+            <div class="label alert" ng-show="account.nameError">{{account.nameError}}</div>
+
+            <input ng-model="account.name" ng-model-options="{debounce: 650}" ng-change="account.validateName()" type="text" placeholder="{{account.namePlaceholder}}" />
           </label>
         </div>
       </div>  
@@ -14,16 +16,17 @@
           <label><span ng-show="!account.emailSuccess"> Wat is je email adres</span>
             <span ng-show="account.emailSuccess" class="success">Je email adress is: {{account.emailSuccess}}</span>
             <span ng-show="account.emailError" class="error label">{{account.emailError}}</span>
-            <input ng-model="account.email" ng-model-options="{debounce: 350}" ng-change="account.validateEmail()" type="email" placeholder="{{account.emailPlaceholder}}" no-validation/>
+            <input ng-model="account.email" ng-model-options="{debounce: 650}" ng-change="account.validateEmail()" type="email" placeholder="{{account.emailPlaceholder}}" no-validation/>
           </label>
         </div>
       </div>
       <div class="row">
         <div class="small-8 columns">
           <label>Kies een Wachtwoord, om later mee in te loggen
+            <span ng-show="account.passwordError" class="error label">{{account.passwordError}}</span>
             <div class="row collapse">
               <div class="small-6 columns">
-                <input ng-model="account.password" ng-model-options="{debounce: 350}" ng-change="account.validatePassword()" type="{{account.passwordVisible  ? 'text':'password'}}" placeholder="{{account.passwordPlaceholder}}">
+                <input ng-model="account.password" ng-model-options="{debounce: 650}" ng-change="account.validatePassword()" type="{{account.passwordVisible  ? 'text':'password'}}" placeholder="{{account.passwordPlaceholder}}">
               </div>
               <div class="small-2 columns">
                 <div  ng-click="account.passwordVisible = !account.passwordVisible" class="button postfix">{{!login.passwordVisible ? 'show':'hide'}}</div>
