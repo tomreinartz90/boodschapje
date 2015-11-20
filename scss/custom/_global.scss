@@ -204,12 +204,10 @@ to prevent collapsing during animation*/
     -webkit-transition: all 0.3s ease;
     -moz-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
-    -ms-transition: all 0.3s ease;
     transition: all 0.3s ease;
 
     &.selected {
       position: relative;
-      height: 150vh;
       top: -10%;
       z-index: 1000;
       width: 100%;
@@ -277,7 +275,7 @@ div.panel {
     .back {
       float: left;
       color: white;
-      padding: 0rem 1.5rem;
+      padding: 0 1.5rem;
       line-height: 3;
     }
   }
