@@ -2,12 +2,17 @@ import {App, IonicApp, Platform} from 'ionic-framework/ionic';
 
 import {HelloIonicPage} from './pages/hello-ionic/hello-ionic';
 import {ListPage} from './pages/list/list';
+import {LoginPage} from './pages/login/login';
 
 @App({
   templateUrl: 'build/app.html'
 })
 
 class MyApp {
+  app;
+  platform;
+  pages;
+  rootPage;
   constructor(app: IonicApp, platform: Platform) {
 
     // set up our app
@@ -18,6 +23,7 @@ class MyApp {
     // set our app's pages
     this.pages = [
       { title: 'Hello Ionic', component: HelloIonicPage },
+      { title: 'login', component: Login },
       { title: 'My First List', component: ListPage }
     ];
 
