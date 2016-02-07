@@ -1,0 +1,21 @@
+<ion-navbar *navbar>
+  <button menuToggle>
+    <ion-icon name="menu"></ion-icon>
+  </button>
+  <ion-title>Uw lijsten</ion-title>
+</ion-navbar>
+
+
+<ion-content padding class="getting-started">
+
+  <ion-list>
+    <button ion-item *ngFor="#list of lists" (click)="gotoList($event, list)">
+      <!--<ion-icon name="{{item.icon}}" item-left></ion-icon>-->
+      {{list.name}}
+      <div class="item-note" item-right>
+        {{getTotalIncomplete( list.list_items )}}
+      </div>
+    </button>
+  </ion-list>
+
+</ion-content>

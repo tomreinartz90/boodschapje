@@ -1,0 +1,26 @@
+.fixed-bottom {
+  background-color: #FFFFFF;
+  box-shadow: 0px -4px 4px -4px rgba(0,0,0,0.75);
+  position: relative;
+}
+
+.large-icon {
+  font-size: 5rem;
+}
+
+a.list-item {
+  margin: -12px 0 -13px 0;
+  padding: 12px 0 13px 0;
+  display: inherit;
+  cursor: pointer;
+}
+
+.suggestion-list {
+  overflow: auto;
+  .item {
+    overflow: visible;
+    .item-inner {
+      display: -webkit-box;
+    }
+  }
+}

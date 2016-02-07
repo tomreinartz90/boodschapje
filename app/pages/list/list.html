@@ -1,21 +1,41 @@
 <ion-navbar *navbar>
-  <button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-  <ion-title>My First List</ion-title>
+    <button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{list.name}}</ion-title>
 </ion-navbar>
 
 <ion-content>
-  <ion-list>
-    <button ion-item *ngFor="#item of items" (click)="itemTapped($event, item)">
-      <ion-icon name="{{item.icon}}" item-left></ion-icon>
-      {{item.title}}
-      <div class="item-note" item-right>
-        {{item.note}}
-      </div>
-    </button>
-  </ion-list>
-  <div *ngIf="selectedItem" padding>
-    You navigated here from <b>{{selectedItem.title}}</b>
-  </div>
+    <ion-refresher (refresh)="doRefresh($event, refresher)" pullingIcon="refresh">
+    </ion-refresher>
+    <ion-list>
+        <ion-item ion-item *ngFor="#item of list.list_items">
+            <a (click)="itemTapped($event, item)" class="list-item">
+                <ion-icon *ngIf="item.completed" name="checkbox-outline"></ion-icon>
+                <ion-icon *ngIf="!item.completed" name="square-outline"></ion-icon>
+                {{item.name}}
+                <div class="item-note">
+                    {{item.note}}
+                </div>
+            </a>
+            <ion-icon name="more" item-right (click)="editItem($event, item)"></ion-icon>
+
+        </ion-item>
+    </ion-list>
+    <div *ngIf="selectedItem" padding>
+        You navigated here from <b>{{selectedItem.title}}</b>
+    </div>
 </ion-content>
+
+<form (ngSubmit)="addListItem()">
+    <ion-row [hidden]="suggestions.length == 0" bottom class="fixed-bottom suggestion-list">
+        <ion-item *ngFor="#sug of suggestions" (click)="setSuggestion(sug)">{{sug}}</ion-item>
+    </ion-row>
+    <ion-row bottom class="fixed-bottom">
+        <ion-item>
+            <ion-label fixed>Nieuwe boodschap</ion-label>
+            <ion-input type="text" [ngModel]="newListItemName" (ngModelChange)="getSuggestion($event)"></ion-input>
+        </ion-item>
+        <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addListItem()"></ion-icon>
+    </ion-row>
+</form>

@@ -1,35 +1,96 @@
 import {IonicApp, Page, NavController, NavParams} from 'ionic-framework/ionic';
+
 import {ItemDetailsPage} from "../item-details/item-details";
+import {List} from "../../services/api";
+import {BsApi} from "../../services/api";
 
 @Page({
   templateUrl: 'build/pages/list/list.html'
 })
 export class ListPage {
-  constructor(app: IonicApp, nav: NavController, navParams: NavParams) {
+  nav:NavController;
+  list:List;
+  newListItemName:string = '';
+  suggestions:Array<string> = [];
+
+  constructor(app: IonicApp, nav: NavController, navParams: NavParams, public api:BsApi) {
     this.nav = nav;
-
     // If we navigated to this page, we will have an item available as a nav param
-    this.selectedItem = navParams.get('item');
+    this.list = navParams.get('list');
+    console.log(this.list);
+  }
 
-    this.icons = ['flask', 'wifi', 'beer', 'football', 'basketball', 'paper-plane',
-    'american-football', 'boat', 'bluetooth', 'build'];
+  itemTapped(event, item){
+    console.log(item);
+    this.api.updateListItemCompleted(!item.completed, item.id).subscribe(function(resp){
+      console.log(item);
+      if(resp.json().success)
+        item.completed = !item.completed;
+    });
+  }
 
-    this.items = [];
-    for(let i = 1; i < 11; i++) {
-      this.items.push({
-        title: 'Item ' + i,
-        note: 'This is item #' + i,
-        icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+  editItem(event, item) {
+
+    console.log('You selected:', item.title);
+    this.nav.push(ItemDetailsPage, {
+      item: item
+    }, {});
+
+
+  }
+  doRefresh(refresher) {
+    console.log('Refreshing!', refresher);
+    var _this = this;
+    this.api.getLists().subscribe(function(resp){
+      refresher.complete();
+      var res = resp.json();
+      if(res.success){
+        res.results.forEach(function(list){
+          if(list.listid == _this.list.listid)
+            _this.list = list;
+        });
+      }
+    })
+  }
+
+  addListItem () {
+    return console.log(this.newListItemName);
+    var _this = this;
+    if(this.newListItemName.length < 1)
+      return;
+    this.api.addListItem(this.newListItemName, this.list.category, this.list.listid).subscribe(function(resp){
+      if(resp.json().success) {
+        _this.newListItemName = '';
+        _this.list.list_items.unshift(resp.json().results[0]);
+        console.log(_this.list);
+      }
+    })
+  }
+
+  setSuggestion(suggestion:string){
+    console.log(suggestion);
+    console.log(this.lastword(this.newListItemName));
+    this.newListItemName  = this.newListItemName.replace(this.lastword(this.newListItemName), suggestion);
+  }
+
+  getSuggestion(input:string) {
+    this.newListItemName = input;
+    var _this = this;
+    if(input.length > 1) {
+      this.api.getSuggestion(this.lastword(input)).subscribe((resp) => {
+        console.log(resp.json());
+        if (resp.status = 200)
+          _this.suggestions = resp.json().results;
+
       });
+      console.log(input);
+    } else {
+      this.suggestions = [];
     }
   }
 
-  itemTapped(event, item) {
-
-    console.log('You selected:', item.title);
-
-      this.nav.push(ItemDetailsPage, {
-        item: item
-      });
+  lastword(words:string){
+    var array = words.split(' ');
+    return array[array.length -1];
   }
 }

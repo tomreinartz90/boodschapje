@@ -1,24 +1,32 @@
 
-<ion-navbar *navbar>
-  <button menuToggle>
-    <ion-icon name="menu"></ion-icon>
-  </button>
-  <ion-title>Login</ion-title>
+<ion-navbar>
+    <!--<button menuToggle>-->
+    <!--<ion-icon name="menu"></ion-icon>-->
+    <!--</button>-->
+    <ion-title>Login</ion-title>
 </ion-navbar>
 
 
 <ion-content padding class="getting-started">
 
-  <h3>Welcome to your first Ionic app!</h3>
+    <h3>Welkom bij Boodschapje!</h3>
 
-  <p>
-    This starter project is our way of helping you get a functional app running in record time.
-  </p>
-  <p>
-    Follow along on the tutorial section of the Ionic docs!
-  </p>
-  <p>
-    <button primary menuToggle>Toggle Menu</button>
-  </p>
+    <p>
+        Voer uw login gegevens in of maak een nieuw account aan
+    </p>
+    <ion-list>
+        <ion-item>
+            <ion-label fixed>Email</ion-label>
+            <ion-input type="text" [(ngModel)]="user.email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label fixed>Password</ion-label>
+            <ion-input type="password" [(ngModel)]="user.password"></ion-input>
+        </ion-item>
+
+    </ion-list>
+    <button block (click)="doLogin()">Login</button>
+    <button block clear>Maak nieuw Account</button>
 
 </ion-content>

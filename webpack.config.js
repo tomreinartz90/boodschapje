@@ -20,7 +20,7 @@ module.exports = {
         test: /\.ts$/,
         loader: 'awesome-typescript',
         query: {
-          'doTypeCheck': false
+          'doTypeCheck': true
         },
         include: path.resolve('app'),
         exclude: /node_modules/
@@ -39,7 +39,11 @@ module.exports = {
     ]
   },
   resolve: {
+    root: [
+      'app'
+    ],
     alias: {
+      'angular2': path.resolve('node_modules/angular2'),
       'web-animations.min': path.normalize('ionic-framework/js/web-animations.min')
     },
     extensions: ["", ".js", ".ts"]
