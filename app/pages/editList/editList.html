@@ -1,0 +1,30 @@
+<ion-navbar *navbar>
+    <button menuToggle *ngIf="!selectedItem">
+        <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{selectedItem.name}}</ion-title>
+</ion-navbar>
+
+<ion-content>
+    <div *ngIf="selectedItem" class="selection">
+        <ion-icon name="{{selectedItem.icon}}"></ion-icon>
+        <div>
+            <ion-item>
+                <ion-label fixed>Naam</ion-label>
+                <ion-input type="text" [(ngModel)]="name"></ion-input>
+            </ion-item>
+
+
+            <div padding (click)="updateList()">
+                <button block outline>opslaan</button>
+            </div>
+            <!--<div padding>-->
+                <!--<button block>Lijst delen</button>-->
+            <!--</div>-->
+            <div padding (click)="presentConfirmDelete()">
+                <button block danger>Verwijderen</button>
+            </div>
+
+        </div>
+    </div>
+</ion-content>

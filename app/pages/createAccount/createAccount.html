@@ -1,0 +1,35 @@
+<ion-navbar>
+    <ion-title>Create Account</ion-title>
+</ion-navbar>
+
+
+<ion-content padding class="getting-started">
+
+    <h3>Welkom bij Boodschapje!</h3>
+
+    <p>
+        Voer om een nieuw account aan te maken hieronder uw gegevens in.
+    </p>
+    <ion-list>
+        <ion-item>
+            <ion-label fixed>Naam</ion-label>
+            <ion-input type="text" [(ngModel)]="user.name"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label fixed>Email</ion-label>
+            <ion-input type="email" [(ngModel)]="user.email"></ion-input>
+        </ion-item>
+
+        <p>Uw wachtwoord moet uit minmaal 6 tekens bestaan.</p>
+        <ion-item>
+            <ion-label fixed>Password</ion-label>
+            <ion-input type="password" [(ngModel)]="user.password"></ion-input>
+        </ion-item>
+
+
+    </ion-list>
+    <p>{{loginError}}</p>
+    <button block (click)="create()">Maar nieuw account aan</button>
+    <button block clear (click)="gotoLogin()">Ik heb al een account</button>
+
+</ion-content>

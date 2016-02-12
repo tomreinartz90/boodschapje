@@ -26,7 +26,8 @@
         </ion-item>
 
     </ion-list>
+    <p>{{loginError}}</p>
     <button block (click)="doLogin()">Login</button>
-    <button block clear>Maak nieuw Account</button>
+    <button block clear (click)="createAccount()">Maak nieuw Account</button>
 
 </ion-content>

@@ -1,5 +1,5 @@
 .fixed-bottom {
-  background-color: #FFFFFF;
+  background-color: $background-color;
   box-shadow: 0px -4px 4px -4px rgba(0,0,0,0.75);
   position: relative;
 }
@@ -8,11 +8,17 @@
   font-size: 5rem;
 }
 
+.item-note{
+  padding-left: 2rem;
+  font-size: 1rem;
+}
+
 a.list-item {
   margin: -12px 0 -13px 0;
   padding: 12px 0 13px 0;
   display: inherit;
   cursor: pointer;
+  text-transform: capitalize;
 }
 
 .suggestion-list {

@@ -16,25 +16,28 @@ export class BsApi {
         this.storage = new Storage();
         this.requestOptionsArgs = {headers: this.apiHeader};
         //sest auth header
-        //this.setAuthHeader();
+        this.setAuthHeader();
     }
 
-    setAuthHeader(){
-        if(this.storage.getUser() != null){
-            this.apiHeader.append('X-AUTH-TOKEN', this.storage.getUser().loginHash);
+    setAuthHeader(user?:User):void {
+        if(user != undefined && user.loginHash != undefined)
+            this.apiHeader.set('X-AUTH-TOKEN', user.loginHash);
+        else if(this.storage.getUser() != null){
+            this.apiHeader.set('X-AUTH-TOKEN', this.storage.getUser().loginHash);
         }
     }
 
+
     login(email, password){
-        console.log(email, password);
         return this.http.get(this.URL + "login?email=" + email + "&password=" + password, this.requestOptionsArgs);
     }
 
     registerNewUser(username, password, email){
-        return this.http.get(this.URL + "account?email=" + email + "&password=" + password + "&username=" + username, this.requestOptionsArgs);
+        return this.http.post(this.URL + "account?email=" + email + "&password=" + password + "&username=" + username, null, this.requestOptionsArgs);
     }
 
     getLists (){
+        console.log(this.requestOptionsArgs);
         return this.http.get(this.URL + "lists", this.requestOptionsArgs);
     }
 
@@ -45,7 +48,6 @@ export class BsApi {
 
     updateListItemCompleted(completed, listitemid){
         return this.http.put(this.URL + "listitems/"+ listitemid +"?&completed=" + completed,  null, this.requestOptionsArgs);
-
     }
 
     getUpdates(timestamp){
@@ -74,11 +76,6 @@ export class BsApi {
                 //console.log(resp.json());
                 newTimestamp = res.timestamp;
                 callback(_this.updateListItems(res.results), newTimestamp);
-
-                //setTimeout(function(){
-                //    if(!_this.gettingUpdates)
-                //        _this.getListUpdates(newTimestamp);
-                //}, 2000);
             });
         } else {
             callback(_this.storage.getLists(), timestamp);
@@ -116,6 +113,26 @@ export class BsApi {
         }
         this.storage.setLists(lists);
         return lists;
+    }
+
+    //add new list by name
+    addList(name:string) {
+        var category = 1;
+        return this.http.post(this.URL + "lists?category=" + category + "&name=" + name, null, this.requestOptionsArgs);
+    }
+
+    updateList(listId:number, name:string, category:string){
+        return this.http.put(this.URL + "lists/" + listId + "?category=" + category + "&name=" + name, null, this.requestOptionsArgs);
+    }
+
+    //remove list by id
+    removeList(listid:number){
+        return this.http.delete(this.URL + "lists/" + listid, this.requestOptionsArgs);
+    }
+
+    //get share code for api
+    shareList(listid:number){
+        return this.http.get(this.URL + "/lists/" + listid + "/share", this.requestOptionsArgs);
     }
 }
 
@@ -164,8 +181,20 @@ export class User {
 
 export class List {
     category: string;
-    list_items: any;
+    list_items: Array<ListItem>;
     listid: string;
     name: string;
     userid: string;
+}
+
+export interface ListItem {
+    addedBy: string;
+    category: string;
+    completed: boolean;
+    completedBy: string;
+    dateAdded: string
+    id: string;
+    last_updated: string;
+    listid: string;
+    name: string
 }

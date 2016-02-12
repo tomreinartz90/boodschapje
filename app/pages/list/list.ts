@@ -1,12 +1,16 @@
-import {IonicApp, Page, NavController, NavParams} from 'ionic-framework/ionic';
+import {IonicApp, Page, Comp NavController, NavParams} from 'ionic-framework/ionic';
+import {Component} from 'angular2/core';
 
 import {ItemDetailsPage} from "../item-details/item-details";
 import {List} from "../../services/api";
 import {BsApi} from "../../services/api";
+import {EditList} from "../editList/editList";
 
 @Page({
   templateUrl: 'build/pages/list/list.html'
 })
+
+
 export class ListPage {
   nav:NavController;
   list:List;
@@ -30,14 +34,19 @@ export class ListPage {
   }
 
   editItem(event, item) {
-
     console.log('You selected:', item.title);
     this.nav.push(ItemDetailsPage, {
       item: item
     }, {});
-
-
   }
+
+  editList() {
+    console.log('You selected:');
+    this.nav.push(EditList, {
+      list: this.list
+    }, {});
+  }
+
   doRefresh(refresher) {
     console.log('Refreshing!', refresher);
     var _this = this;
@@ -54,7 +63,7 @@ export class ListPage {
   }
 
   addListItem () {
-    return console.log(this.newListItemName);
+    this.focusOnInput();
     var _this = this;
     if(this.newListItemName.length < 1)
       return;
@@ -68,10 +77,15 @@ export class ListPage {
   }
 
   setSuggestion(suggestion:string){
-    console.log(suggestion);
-    console.log(this.lastword(this.newListItemName));
+    this.focusOnInput();
     this.newListItemName  = this.newListItemName.replace(this.lastword(this.newListItemName), suggestion);
   }
+
+  focusOnInput(){
+    //noinspection TypeScriptUnresolvedFunction
+    document.querySelector('#listitem-input input').focus();
+  }
+
 
   getSuggestion(input:string) {
     this.newListItemName = input;

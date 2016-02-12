@@ -3,7 +3,7 @@ module.exports = {
 
   paths: {
     html : {
-      src: ['app/**/*.html'],
+      src: ['app/**/*.+{html|png|jpg|gif}'],
       dest: "www/build"
     },
     sass: {

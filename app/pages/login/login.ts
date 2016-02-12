@@ -1,6 +1,7 @@
 import {Page, NavController} from 'ionic-framework/ionic';
 import {BsApi, Storage, User} from "../../services/api";
 import {WelcomePage} from "../welcome/welcome";
+import {CreateAccount} from "../createAccount/createAccount";
 
 @Page({
   templateUrl: 'build/pages/login/login.html'
@@ -11,7 +12,6 @@ export class LoginPage {
   user:User;
 
   constructor( public api:BsApi, public storage:Storage, public nav: NavController) {
-    console.log(api);
     this.user = new User();
     this.user.email = '';
     this.user.password = '';
@@ -20,11 +20,12 @@ export class LoginPage {
   doLogin(){
     this.busy = true;
     var _this = this;
-
+    _this.loginError = 'Uw gegevens worden gecontrolleerd';
     this.api.login(_this.user.email, _this.user.password).subscribe(function(resp){
 
       //if login is success
       var res = resp.json();
+      console.log(res);
       if(res.success){
         _this.loginError = '';
         var userData = res.results[0];
@@ -45,10 +46,19 @@ export class LoginPage {
       } else {
         //todo handle bad login
         _this.busy = false;
-        _this.loginError = 'Fout tijdens inloggen'
+        _this.loginError = 'Gebruikernaam of wachtwoord is onjuist'
       }
 
+    }, error => {
+      console.log(error);
+      _this.loginError = 'Fout tijdens verbinden met server'
+
     });
+  }
+
+  createAccount(){
+    console.log('goto account creation page');
+    this.nav.setRoot(CreateAccount, {}, {});
   }
 }
 

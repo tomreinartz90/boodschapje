@@ -21,10 +21,38 @@
 // are different per mode.
 
 $colors: (
-  primary:    #387ef5,
-  secondary:  #32db64,
+  primary:    #333,
+  secondary: #6fd300,
   danger:     #f53d3d,
-  light:      #f4f4f4,
+  light:      #fff,
   dark:       #222,
   favorite:   #69BB7B
 );
+
+$text-color:                 #222 !default;
+$paragraph-color:            $text-color !default;
+$link-color:                 map-get($colors, dark) !default;
+$background-color:           #fff !default;
+$subdued-text-color:         #666 !default;
+
+$font-family-base:           -apple-system, "Helvetica Neue", "Roboto", sans-serif !default;
+$font-size-base:             1.4rem !default; // 1.4rem == 14px
+
+$toolbar-background:         map-get($colors, secondary) !default;
+$toolbar-border-color:       #52a400 !default;
+$toolbar-text-color:         #fff !default;
+$toolbar-active-color:       map-get($colors, light) !default;
+$toolbar-inactive-color:     #8c8c8c !default;
+
+$list-text-color:            $text-color !default;
+$list-background-color:      $background-color !default;
+$list-border-color:          map-get($colors, seconday) !default;
+
+
+ion-content ion-icon {
+  //color: map-get($colors, primary);
+}
+
+.alert-button-group button {
+  color: map-get($colors, dark);
+}

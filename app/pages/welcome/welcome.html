@@ -19,3 +19,12 @@
   </ion-list>
 
 </ion-content>
+<form (ngSubmit)="addListItem()">
+  <ion-row bottom class="fixed-bottom">
+    <ion-item>
+      <ion-label fixed>Nieuwe Lijst</ion-label>
+      <ion-input type="text" [(ngModel)]="newListName"></ion-input>
+    </ion-item>
+    <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addList();"></ion-icon>
+  </ion-row>
+</form>

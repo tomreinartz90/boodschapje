@@ -1,8 +1,14 @@
 <ion-navbar *navbar>
-    <button menuToggle>
+
+    <ion-title>{{list.name}}</ion-title>
+    <button menuToggle start>
         <ion-icon name="menu"></ion-icon>
     </button>
-    <ion-title>{{list.name}}</ion-title>
+    <ion-buttons end (click)="editList()">
+        <button>
+            <ion-icon name="settings"></ion-icon>
+        </button>
+    </ion-buttons>
 </ion-navbar>
 
 <ion-content>
@@ -15,7 +21,7 @@
                 <ion-icon *ngIf="!item.completed" name="square-outline"></ion-icon>
                 {{item.name}}
                 <div class="item-note">
-                    {{item.note}}
+                    - {{item.addedBy}}
                 </div>
             </a>
             <ion-icon name="more" item-right (click)="editItem($event, item)"></ion-icon>
@@ -29,13 +35,13 @@
 
 <form (ngSubmit)="addListItem()">
     <ion-row [hidden]="suggestions.length == 0" bottom class="fixed-bottom suggestion-list">
-        <ion-item *ngFor="#sug of suggestions" (click)="setSuggestion(sug)">{{sug}}</ion-item>
+        <ion-item *ngFor="#sug of suggestions" (click)="setSuggestion(sug);">{{sug}}</ion-item>
     </ion-row>
     <ion-row bottom class="fixed-bottom">
         <ion-item>
             <ion-label fixed>Nieuwe boodschap</ion-label>
-            <ion-input type="text" [ngModel]="newListItemName" (ngModelChange)="getSuggestion($event)"></ion-input>
+            <ion-input type="text" id="listitem-input" [ngModel]="newListItemName" (ngModelChange)="getSuggestion($event)"></ion-input>
         </ion-item>
-        <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addListItem()"></ion-icon>
+        <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addListItem();"></ion-icon>
     </ion-row>
 </form>
