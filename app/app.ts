@@ -33,7 +33,7 @@ export class MyApp {
     bsApi.setAuthHeader();
     this.pages = [
       { title: 'Lijsten', component: WelcomePage },
-      { title: 'Login', component: LoginPage },
+      //{ title: 'Login', component: LoginPage },
       //{ title: 'Create', component: CreateAccount }
     ];
   }
