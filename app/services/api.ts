@@ -1,89 +1,100 @@
-import {Http, HTTP_PROVIDERS, Headers, RequestOptionsArgs} from 'angular2/http';
-import {Events} from 'ionic-framework/ionic';
+import {Http, HTTP_PROVIDERS, Headers, RequestOptionsArgs} from '@angular/http';
+import {Events} from 'ionic-angular';
 import { Observable } from 'rxjs/Observable';
+import { delay } from 'rxjs/operator/delay';
 
 
 export class BsApi {
     URL:string = 'http://boodschappen.tomreinartz.com/api2/';
     public http:Http;
     public apiHeader:Headers;
-    public storage:Storage;
+    public storage:StorageApi;
     private requestOptionsArgs:RequestOptionsArgs;
     private gettingUpdates = false;
 
-    constructor(){
+    constructor() {
         this.apiHeader = new Headers();
-        this.storage = new Storage();
+        this.storage = new StorageApi();
         this.requestOptionsArgs = {headers: this.apiHeader};
         //sest auth header
         this.setAuthHeader();
     }
 
     setAuthHeader(user?:User):void {
-        if(user != undefined && user.loginHash != undefined)
+        if (user != undefined && user.loginHash != undefined)
             this.apiHeader.set('X-AUTH-TOKEN', user.loginHash);
-        else if(this.storage.getUser() != null){
+        else if (this.storage.getUser() != null) {
             this.apiHeader.set('X-AUTH-TOKEN', this.storage.getUser().loginHash);
         }
     }
 
 
-    login(email, password){
+    login(email, password) {
         return this.http.get(this.URL + "login?email=" + email + "&password=" + password, this.requestOptionsArgs);
     }
 
-    registerNewUser(username, password, email){
+    registerNewUser(username, password, email) {
         return this.http.post(this.URL + "account?email=" + email + "&password=" + password + "&username=" + username, null, this.requestOptionsArgs);
     }
 
-    getLists (){
+    getLists() {
         console.log(this.requestOptionsArgs);
         return this.http.get(this.URL + "lists", this.requestOptionsArgs);
     }
 
-    newList(name, cat){
+    newList(name, cat) {
         return this.http.get(this.URL + "new-list?name=" + name + "&category=" + cat, this.requestOptionsArgs);
     }
 
 
-    updateListItemCompleted(completed, listitemid){
-        return this.http.put(this.URL + "listitems/"+ listitemid +"?&completed=" + completed,  null, this.requestOptionsArgs);
+    updateListItemCompleted(listItem:ListItem) {
+        return this.http.put(this.URL + "listitems/" + listItem.id + "?&completed=" + listItem.completed, null, this.requestOptionsArgs).subscribe(resp => {}, error => {
+            this.storage.addListItemToBeUpdated(listItem);
+        });
     }
 
-    getUpdates(timestamp){
+    getUpdates(timestamp) {
         return this.http.get(this.URL + "updates?timestamp=" + timestamp, this.requestOptionsArgs);
     }
-    getSuggestion(itemName){
+
+    getSuggestion(itemName) {
         return this.http.get(this.URL + "suggestions?q=" + itemName, this.requestOptionsArgs);
     }
 
-    addListItem (name, category, listid){
+    addListItem(name, category, listid) {
         //http://boodschappen.tomreinartz.com/api2/listitems?category=1&listid=12&name=vla
         category = 1;
         return this.http.post(this.URL + "listitems?category=" + category + "&listid=" + listid + "&name=" + name, null, this.requestOptionsArgs);
     }
 
 
-    getListUpdates (timestamp, callback){
-        var _this = this;
+    getListUpdates(timestamp, callback) {
+        var _self = this;
         var newTimestamp;
-        if(!this.gettingUpdates) {
+        if (!this.gettingUpdates) {
 
             this.gettingUpdates = true;
             this.getUpdates(timestamp).subscribe(function (resp) {
-                _this.gettingUpdates = false;
+                _self.gettingUpdates = false;
                 var res = resp.json();
                 //console.log(resp.json());
                 newTimestamp = res.timestamp;
-                callback(_this.updateListItems(res.results), newTimestamp);
+                callback(_self.updateListItems(res.results), newTimestamp);
             });
         } else {
-            callback(_this.storage.getLists(), timestamp);
+            callback(_self.storage.getLists(), timestamp);
+        }
+
+        if(this.storage.getListItemsToBeUpdated().length){
+            this.storage.getListItemsToBeUpdated().forEach(listItem => {
+                this.updateListItemCompleted(listItem)
+            })
+            this.storage.clearListItemsToBeUpdated();
         }
     }
 
-    updateListItems (updatedListItems:Array<any>) {
-        var _this = this;
+    updateListItems(updatedListItems:Array<any>) {
+        var _self = this;
         var lists = this.storage.getLists();
         if (updatedListItems.length > 0) {
             updatedListItems.forEach(function (updatedListItem) {
@@ -99,9 +110,9 @@ export class BsApi {
                     });
                 });
                 //add list item
-                if(!inList){
+                if (!inList) {
                     lists.forEach(function (list) {
-                        if(updatedListItem.listid == list.listid){
+                        if (updatedListItem.listid == list.listid) {
                             console.log(list.listid);
                             list.list_items.unshift(updatedListItem);
                         }
@@ -121,52 +132,68 @@ export class BsApi {
         return this.http.post(this.URL + "lists?category=" + category + "&name=" + name, null, this.requestOptionsArgs);
     }
 
-    updateList(listId:number, name:string, category:string){
+    updateList(listId:number, name:string, category:string) {
         return this.http.put(this.URL + "lists/" + listId + "?category=" + category + "&name=" + name, null, this.requestOptionsArgs);
     }
 
     //remove list by id
-    removeList(listid:number){
+    removeList(listid:number) {
         return this.http.delete(this.URL + "lists/" + listid, this.requestOptionsArgs);
     }
 
     //get share code for api
-    shareList(listid:number){
+    shareList(listid:number) {
         return this.http.get(this.URL + "/lists/" + listid + "/share", this.requestOptionsArgs);
     }
 }
 
-export class Storage {
+export class StorageApi {
 
-    get(name){
+    get(name) {
         return JSON.parse(localStorage.getItem(name));
     }
 
-    set(name, value){
+    set(name, value) {
         return localStorage.setItem(name, JSON.stringify(value));
     }
 
     //get user information from storage
-    getUser():User{
+    getUser():User {
         return this.get('user');
     }
+
     //set user information
-    setUser(user:User){
+    setUser(user:User) {
         return this.set('user', user);
     }
+
     //get lists
-    getLists(){
-        return this.get('lists')
+    getLists() {
+        return this.get('lists') || []
     }
+
     //set lists
-    setLists(lists){
+    setLists(lists) {
         return this.set('lists', lists)
+    }
+
+    addListItemToBeUpdated(item:ListItem) {
+        if (item)
+            this.set('listItemsToBeUpdated', this.getListItemsToBeUpdated().push(item))
+    }
+
+    getListItemsToBeUpdated():Array<ListItem> {
+        return this.get('listItemsToBeUpdated') || [];
     }
 
 
     //clear local data (logout)
-    clearLocalData(){
+    clearLocalData() {
         localStorage.clear();
+    }
+
+    clearListItemsToBeUpdated():void {
+        this.set('listItemsToBeUpdated', []);
     }
 }
 
@@ -180,11 +207,11 @@ export class User {
 }
 
 export class List {
-    category: string;
-    list_items: Array<ListItem>;
-    listid: string;
-    name: string;
-    userid: string;
+    category:string;
+    list_items:Array<ListItem>;
+    listid:string;
+    name:string;
+    userid:string;
 }
 
 export interface ListItem {
@@ -198,3 +225,4 @@ export interface ListItem {
     listid: string;
     name: string
 }
+//

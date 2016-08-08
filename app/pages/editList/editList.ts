@@ -1,4 +1,4 @@
-import {IonicApp, Page, NavController, NavParams, Alert} from 'ionic-framework/ionic';
+import {Page, NavController, NavParams, Alert} from 'ionic-angular';
 import {BsApi} from "../../services/api";
 import {WelcomePage} from "../welcome/welcome";
 
@@ -10,8 +10,7 @@ export class EditList {
   selectedItem;
   name;
 
-  constructor(app: IonicApp,
-              nav: NavController,
+  constructor(nav: NavController,
               navParams: NavParams,
               public api:BsApi) {
     this.nav = nav;
@@ -23,26 +22,26 @@ export class EditList {
 
   presentConfirmDelete() {
     var _self = this;
-    let alert = Alert.create({
-      title: 'Bevestig verwijderen',
-      message: 'Weet u zeker dat u deze lijst wilt verwijderen? Dit kan niet ongedaan worden gemaakt!',
-      buttons: [
-        {
-          text: 'annuleer',
-          handler: () => {
-            console.log('Cancel clicked');
-          }
-        },
-        {
-          role: 'cancel',
-          text: 'Verwijder',
-          handler: () => {
-            _self.deleteList();
-            console.log('delete clicked');
-          }
-        }
-      ]
-    });
+    //let alert = Alert.create({
+    //  title: 'Bevestig verwijderen',
+    //  message: 'Weet u zeker dat u deze lijst wilt verwijderen? Dit kan niet ongedaan worden gemaakt!',
+    //  buttons: [
+    //    {
+    //      text: 'annuleer',
+    //      handler: () => {
+    //        console.log('Cancel clicked');
+    //      }
+    //    },
+    //    {
+    //      role: 'cancel',
+    //      text: 'Verwijder',
+    //      handler: () => {
+    //        _self.deleteList();
+    //        console.log('delete clicked');
+    //      }
+    //    }
+    //  ]
+    //});
     this.nav.present(alert);
   }
 

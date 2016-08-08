@@ -1,9 +1,8 @@
-<ion-navbar *navbar>
-    <button menuToggle *ngIf="!selectedItem">
-        <ion-icon name="menu"></ion-icon>
-    </button>
-    <ion-title>{{selectedItem.name}}</ion-title>
-</ion-navbar>
+<ion-toolbar>
+    <ion-navbar>
+        <ion-title>{{selectedItem.name}}</ion-title>
+    </ion-navbar>
+</ion-toolbar>
 
 <ion-content>
     <div *ngIf="selectedItem" class="selection">
@@ -19,7 +18,7 @@
                 <button block outline>opslaan</button>
             </div>
             <!--<div padding>-->
-                <!--<button block>Lijst delen</button>-->
+            <!--<button block>Lijst delen</button>-->
             <!--</div>-->
             <div padding (click)="presentConfirmDelete()">
                 <button block danger>Verwijderen</button>

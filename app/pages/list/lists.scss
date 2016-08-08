@@ -2,15 +2,24 @@
   background-color: $background-color;
   box-shadow: 0px -4px 4px -4px rgba(0,0,0,0.75);
   position: relative;
+
+  ion-icon {
+    color:  map-get($colors, secondary)!important;
+  }
 }
 
 .large-icon {
   font-size: 5rem;
 }
 
-.item-note{
+.item-note {
   padding-left: 2rem;
   font-size: 1rem;
+}
+
+.list-item i {
+  text-decoration: line-through;
+  color: $list-border-color;
 }
 
 a.list-item {

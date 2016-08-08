@@ -1,9 +1,5 @@
-<ion-navbar *navbar>
-
+<ion-navbar>
     <ion-title>{{list.name}}</ion-title>
-    <button menuToggle start>
-        <ion-icon name="menu"></ion-icon>
-    </button>
     <ion-buttons end (click)="editList()">
         <button>
             <ion-icon name="settings"></ion-icon>
@@ -12,16 +8,16 @@
 </ion-navbar>
 
 <ion-content>
-    <ion-refresher (refresh)="doRefresh($event, refresher)" pullingIcon="refresh">
-    </ion-refresher>
     <ion-list>
-        <ion-item ion-item *ngFor="#item of list.list_items">
+        <ion-item ion-item *ngFor="let item of list.list_items">
             <a (click)="itemTapped($event, item)" class="list-item">
-                <ion-icon *ngIf="item.completed" name="checkbox-outline"></ion-icon>
                 <ion-icon *ngIf="!item.completed" name="square-outline"></ion-icon>
-                {{item.name}}
+                <ion-icon *ngIf="item.completed" name="checkbox"></ion-icon>
+
+                <span> {{item.name}}</span>
+
                 <div class="item-note">
-                    - {{item.addedBy}}
+                    Toegevoegd: {{item.addedBy}}
                 </div>
             </a>
             <ion-icon name="more" item-right (click)="editItem($event, item)"></ion-icon>
@@ -35,13 +31,15 @@
 
 <form (ngSubmit)="addListItem()">
     <ion-row [hidden]="suggestions.length == 0" bottom class="fixed-bottom suggestion-list">
-        <ion-item *ngFor="#sug of suggestions" (click)="setSuggestion(sug);">{{sug}}</ion-item>
+        <ion-item *ngFor="let sug of suggestions" (click)="setSuggestion(sug);">{{sug}}</ion-item>
     </ion-row>
     <ion-row bottom class="fixed-bottom">
         <ion-item>
-            <ion-label fixed>Nieuwe boodschap</ion-label>
-            <ion-input type="text" id="listitem-input" [ngModel]="newListItemName" (ngModelChange)="getSuggestion($event)"></ion-input>
+            <ion-label stacked>Nieuwe boodschap</ion-label>
+            <ion-input type="text" id="listitem-input" [ngModel]="newListItemName"
+                       (ngModelChange)="getSuggestion($event)" name="newListItem"></ion-input>
         </ion-item>
         <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addListItem();"></ion-icon>
     </ion-row>
 </form>
+

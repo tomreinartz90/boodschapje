@@ -1,4 +1,4 @@
-import {Directive} from 'angular2/core';
+import {Component} from '@angular/core';
 
 /*
  Generated class for the Menu directive.
@@ -6,7 +6,7 @@ import {Directive} from 'angular2/core';
  See https://angular.io/docs/ts/latest/api/core/DirectiveMetadata-class.html
  for more info on Angular 2 Directives.
  */
-@Directive({
+@Component({
   selector: 'menu'
 })
 

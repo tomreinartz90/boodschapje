@@ -1,6 +1,6 @@
-<ion-navbar>
+<ion-toolbar>
     <ion-title>Create Account</ion-title>
-</ion-navbar>
+</ion-toolbar>
 
 
 <ion-content padding class="getting-started">
@@ -12,24 +12,24 @@
     </p>
     <ion-list>
         <ion-item>
-            <ion-label fixed>Naam</ion-label>
+            <ion-label stacked>Naam</ion-label>
             <ion-input type="text" [(ngModel)]="user.name"></ion-input>
         </ion-item>
         <ion-item>
-            <ion-label fixed>Email</ion-label>
+            <ion-label stacked>Email</ion-label>
             <ion-input type="email" [(ngModel)]="user.email"></ion-input>
         </ion-item>
 
         <p>Uw wachtwoord moet uit minmaal 6 tekens bestaan.</p>
         <ion-item>
-            <ion-label fixed>Password</ion-label>
+            <ion-label stacked>Password</ion-label>
             <ion-input type="password" [(ngModel)]="user.password"></ion-input>
         </ion-item>
 
 
     </ion-list>
     <p>{{loginError}}</p>
-    <button block (click)="create()">Maar nieuw account aan</button>
+    <button block secondary (click)="create()" >Maar nieuw account aan</button>
     <button block clear (click)="gotoLogin()">Ik heb al een account</button>
 
 </ion-content>

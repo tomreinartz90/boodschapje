@@ -1,5 +1,5 @@
-import {Page, NavController} from 'ionic-framework/ionic';
-import {BsApi, Storage, User} from "../../services/api";
+import {Page, NavController} from 'ionic-angular';
+import {BsApi, StorageApi, User} from "../../services/api";
 import {WelcomePage} from "../welcome/welcome";
 import {LoginPage} from "../login/login";
 
@@ -11,7 +11,7 @@ export class CreateAccount {
   loginError:string = '';
   user:User;
 
-  constructor( public api:BsApi, public storage:Storage, public nav: NavController) {
+  constructor(public api:BsApi, public storage:StorageApi, public nav: NavController) {
     this.user = new User();
     this.user.name = '';
     this.user.email = '';

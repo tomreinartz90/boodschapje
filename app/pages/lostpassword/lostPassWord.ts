@@ -2,12 +2,11 @@ import {Page, NavController} from 'ionic-angular';
 import {BsApi, StorageApi, User} from "../../services/api";
 import {WelcomePage} from "../welcome/welcome";
 import {CreateAccount} from "../createAccount/createAccount";
-import {LostPassword} from "../lostpassword/lostPassWord";
 
 @Page({
-  templateUrl: 'build/pages/login/login.html'
+  templateUrl: 'build/pages/lostpassword/lostpassword.html'
 })
-export class LoginPage {
+export class LostPassword {
   busy:boolean = false;
   loginError:string = '';
   user:User;
@@ -15,7 +14,6 @@ export class LoginPage {
   constructor(public api:BsApi, public storage:StorageApi, public nav: NavController) {
     this.user = new User();
     this.user.email = '';
-    this.user.password = '';
   }
 
   doLogin(){
@@ -60,10 +58,6 @@ export class LoginPage {
   createAccount(){
     console.log('goto account creation page');
     this.nav.setRoot(CreateAccount, {}, {});
-  }
-  lostPassword(){
-    console.log('goto account creation page');
-    this.nav.setRoot(LostPassword, {email: this.user.email}, {});
   }
 }
 

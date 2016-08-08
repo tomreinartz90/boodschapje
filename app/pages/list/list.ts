@@ -1,5 +1,5 @@
-import {IonicApp, Page, Comp NavController, NavParams} from 'ionic-framework/ionic';
-import {Component} from 'angular2/core';
+import {NavParams, NavController, Page} from 'ionic-angular';
+import {Component} from '@angular/core';
 
 import {ItemDetailsPage} from "../item-details/item-details";
 import {List} from "../../services/api";
@@ -17,7 +17,7 @@ export class ListPage {
   newListItemName:string = '';
   suggestions:Array<string> = [];
 
-  constructor(app: IonicApp, nav: NavController, navParams: NavParams, public api:BsApi) {
+  constructor(nav: NavController, navParams: NavParams, public api:BsApi) {
     this.nav = nav;
     // If we navigated to this page, we will have an item available as a nav param
     this.list = navParams.get('list');
@@ -25,23 +25,17 @@ export class ListPage {
   }
 
   itemTapped(event, item){
-    console.log(item);
-    this.api.updateListItemCompleted(!item.completed, item.id).subscribe(function(resp){
-      console.log(item);
-      if(resp.json().success)
-        item.completed = !item.completed;
-    });
+    item.completed = !item.completed;
+    this.api.updateListItemCompleted(item);
   }
 
   editItem(event, item) {
-    console.log('You selected:', item.title);
     this.nav.push(ItemDetailsPage, {
       item: item
     }, {});
   }
 
   editList() {
-    console.log('You selected:');
     this.nav.push(EditList, {
       list: this.list
     }, {});
@@ -70,8 +64,8 @@ export class ListPage {
     this.api.addListItem(this.newListItemName, this.list.category, this.list.listid).subscribe(function(resp){
       if(resp.json().success) {
         _this.newListItemName = '';
+        _this.suggestions = [];
         _this.list.list_items.unshift(resp.json().results[0]);
-        console.log(_this.list);
       }
     })
   }
@@ -83,7 +77,7 @@ export class ListPage {
 
   focusOnInput(){
     //noinspection TypeScriptUnresolvedFunction
-    document.querySelector('#listitem-input input').focus();
+    //document.querySelector('#listitem-input input').focus();
   }
 
 

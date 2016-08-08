@@ -1,9 +1,9 @@
-import {IonicApp, NavController, NavParams} from 'ionic-framework/ionic';
-import {View} from 'angular2/core';
+import {IonicApp, NavController, NavParams} from 'ionic-angular';
+import {View} from '@angular/core';
 import {BsApi} from "../../services/api";
 
 @View({
-    templateUrl: 'build/pages/list/list.html',
+    templateUrl: 'build/components/leftMenu/leftMenu.html',
     selector: 'left-menu'
 })
 

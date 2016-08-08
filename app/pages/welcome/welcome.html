@@ -1,15 +1,15 @@
-<ion-navbar *navbar>
+<ion-toolbar>
   <button menuToggle>
     <ion-icon name="menu"></ion-icon>
   </button>
   <ion-title>Uw lijsten</ion-title>
-</ion-navbar>
+</ion-toolbar>
 
 
 <ion-content padding class="getting-started">
 
   <ion-list>
-    <button ion-item *ngFor="#list of lists" (click)="gotoList($event, list)">
+    <button ion-item *ngFor="let list of lists" (click)="gotoList($event, list)">
       <!--<ion-icon name="{{item.icon}}" item-left></ion-icon>-->
       {{list.name}}
       <div class="item-note" item-right>
@@ -22,8 +22,8 @@
 <form (ngSubmit)="addListItem()">
   <ion-row bottom class="fixed-bottom">
     <ion-item>
-      <ion-label fixed>Nieuwe Lijst</ion-label>
-      <ion-input type="text" [(ngModel)]="newListName"></ion-input>
+      <ion-label stacked>Nieuwe Lijst</ion-label>
+      <ion-input type="text" [(ngModel)]="newListName" name="newListItem"></ion-input>
     </ion-item>
     <ion-icon name="add-circle" class="large-icon" primary item-right (click)="addList();"></ion-icon>
   </ion-row>
