@@ -8,25 +8,31 @@
 </ion-navbar>
 
 <ion-content>
-    <ion-list>
-        <ion-item ion-item *ngFor="let item of list.list_items">
-            <a (click)="itemTapped($event, item)" class="list-item">
-                <ion-icon *ngIf="!item.completed" name="square-outline"></ion-icon>
-                <ion-icon *ngIf="item.completed" name="checkbox"></ion-icon>
 
-                <span> {{item.name}}</span>
+    <ion-refresher (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content>        </ion-refresher-content>
+    </ion-refresher>
 
-                <div class="item-note">
-                    Toegevoegd: {{item.addedBy}}
-                </div>
-            </a>
-            <ion-icon name="more" item-right (click)="editItem($event, item)"></ion-icon>
 
-        </ion-item>
-    </ion-list>
-    <div *ngIf="selectedItem" padding>
-        You navigated here from <b>{{selectedItem.title}}</b>
-    </div>
+        <ion-list>
+                <ion-item ion-item *ngFor="let item of list.list_items">
+                    <a (click)="itemTapped($event, item)" class="list-item">
+                        <ion-icon *ngIf="!item.completed" name="square-outline"></ion-icon>
+                        <ion-icon *ngIf="item.completed" name="checkbox"></ion-icon>
+
+                        <span> {{item.name}}</span>
+
+                        <div class="item-note">
+                            Toegevoegd: {{item.addedBy}}
+                        </div>
+                    </a>
+                    <!--<ion-icon name="more" item-right (click)="editItem($event, item)"></ion-icon>-->
+
+                </ion-item>
+            </ion-list>
+            <div *ngIf="selectedItem" padding>
+                You navigated here from <b>{{selectedItem.title}}</b>
+            </div>
 </ion-content>
 
 <form (ngSubmit)="addListItem()">

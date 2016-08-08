@@ -14,8 +14,10 @@ export class WelcomePage {
 
     constructor(public nav:NavController, public storage:StorageApi, public api:BsApi) {
         if (this.checkIfUserHasBeenLoggedIn()) {
-            this.getUserListFromStorage();
-            this.getUserLists();
+            nav.viewWillEnter.subscribe(()=> {
+                this.getUserListFromStorage();
+                this.getUserLists();
+            })
         }
     }
 
